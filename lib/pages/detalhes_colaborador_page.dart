@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:medocup_app/models/colaborador.model.dart';
-import 'package:medocup_app/pages/cadastro.colaborador.page.dart';
-import 'package:medocup_app/pages/home.page.dart';
-import 'package:medocup_app/providers/colaborador.provider.dart';
-import 'package:medocup_app/widgets/text.info.widget.dart';
+import 'package:medocup_app/models/colaborador_model.dart';
+import 'package:medocup_app/pages/cadastro.colaborador_page.dart';
+import 'package:medocup_app/pages/home_page.dart';
+import 'package:medocup_app/providers/colaborador_provider.dart';
+import 'package:medocup_app/widgets/text_info_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:medocup_app/models/agendamento.model.dart';
-import 'package:medocup_app/pages/agendamento.page.dart';
-import 'package:medocup_app/providers/agendamento.provider.dart';
-import 'package:medocup_app/widgets/text.info.widget.dart';
+import 'package:medocup_app/models/agendamento_model.dart';
+import 'package:medocup_app/pages/agendamento_page.dart';
+import 'package:medocup_app/providers/agendamento_provider.dart';
+import 'package:medocup_app/widgets/text_info_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';

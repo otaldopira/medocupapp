@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:medocup_app/models/agendamento.model.dart';
-import 'package:medocup_app/repositories/agendamento.repository.dart';
+import 'package:medocup_app/models/agendamento_model.dart';
+import 'package:medocup_app/repositories/agendamento_repository.dart';
 
 class AgendamentoProvider extends ChangeNotifier {
   List<Agendamento> _agendamentos = AgendamentoRepository.agendamentos;

@@ -1,4 +1,4 @@
-import 'package:medocup_app/models/endereco.model.dart';
+import 'package:medocup_app/models/endereco_model.dart';
 
 class Colaborador {
   int id;

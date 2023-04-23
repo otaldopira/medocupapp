@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:medocup_app/models/agendamento.model.dart';
-import 'package:medocup_app/pages/detalhes.agendamento.page.dart';
+import 'package:medocup_app/models/agendamento_model.dart';
+import 'package:medocup_app/pages/detalhes_agendamento_page.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class CardHorario extends StatelessWidget {

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:intl/intl.dart';
-import 'package:medocup_app/mixins/validations.mixin.dart';
-import 'package:medocup_app/models/colaborador.model.dart';
-import 'package:medocup_app/models/endereco.model.dart';
-import 'package:medocup_app/providers/colaborador.provider.dart';
+import 'package:medocup_app/mixins/validations_mixin.dart';
+import 'package:medocup_app/models/colaborador_model.dart';
+import 'package:medocup_app/models/endereco_model.dart';
+import 'package:medocup_app/providers/colaborador_provider.dart';
 import 'package:provider/provider.dart';
 
 class CadastroColaboradorPage extends StatefulWidget {
@@ -72,6 +72,56 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
   final _bairro = TextEditingController();
   final _rua = TextEditingController();
 
+  int gerarId() {
+    return context.read<ColaboradorProvider>().colaboradores.last.id + 1;
+  }
+
+  cadastrarColaborador() {
+    Colaborador colaborador = Colaborador(
+      id: gerarId(),
+      nome: _nome.text,
+      sexo: _generoSelecionado.toString(),
+      cpf: _cpf.text,
+      rg: _rg.text,
+      dataNascimento: _dataNascimento.text,
+      celular: _celular.text,
+      endereco: Endereco(
+          cep: _cep.text,
+          estado: _estadoSelecionado.toString(),
+          cidade: _cidade.text,
+          bairro: _bairro.text,
+          rua: _rua.text),
+    );
+    if (formKey.currentState!.validate()) {
+      context.watch<ColaboradorProvider>().inserirColaborador(colaborador);
+      Navigator.pop(context);
+    }
+    return null;
+  }
+
+  editarColaborador() {
+    Colaborador colaborador = Colaborador(
+      id: widget.colaborador!.id,
+      nome: _nome.text,
+      sexo: _generoSelecionado.toString(),
+      cpf: _cpf.text,
+      rg: _rg.text,
+      dataNascimento: _dataNascimento.text,
+      celular: _celular.text,
+      endereco: Endereco(
+          cep: _cep.text,
+          estado: _estadoSelecionado.toString(),
+          cidade: _cidade.text,
+          bairro: _bairro.text,
+          rua: _rua.text),
+    );
+    if (formKey.currentState!.validate()) {
+      context.watch<ColaboradorProvider>().editarColaborador(colaborador);
+      Navigator.pop(context, colaborador);
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -92,58 +142,7 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
 
   @override
   Widget build(BuildContext context) {
-    final colaboradores = Provider.of<ColaboradorProvider>(context);
-
-    int gerarId() {
-      return colaboradores.colaboradores.last.id.toInt() + 1;
-    }
-
-    cadastrarColaborador() {
-      Colaborador colaborador = Colaborador(
-        id: gerarId(),
-        nome: _nome.text,
-        sexo: _generoSelecionado.toString(),
-        cpf: _cpf.text,
-        rg: _rg.text,
-        dataNascimento: _dataNascimento.text,
-        celular: _celular.text,
-        endereco: Endereco(
-            cep: _cep.text,
-            estado: _estadoSelecionado.toString(),
-            cidade: _cidade.text,
-            bairro: _bairro.text,
-            rua: _rua.text),
-      );
-      if (formKey.currentState!.validate()) {
-        colaboradores.inserirColaborador(colaborador);
-        Navigator.pop(context);
-      }
-      return null;
-    }
-
-    editarColaborador() {
-      Colaborador colaborador = Colaborador(
-        id: widget.colaborador!.id,
-        nome: _nome.text,
-        sexo: _generoSelecionado.toString(),
-        cpf: _cpf.text,
-        rg: _rg.text,
-        dataNascimento: _dataNascimento.text,
-        celular: _celular.text,
-        endereco: Endereco(
-            cep: _cep.text,
-            estado: _estadoSelecionado.toString(),
-            cidade: _cidade.text,
-            bairro: _bairro.text,
-            rua: _rua.text),
-      );
-      if (formKey.currentState!.validate()) {
-        colaboradores.editarColaborador(colaborador);
-        Navigator.pop(context, colaborador);
-      }
-      return null;
-    }
-
+    final colaboradores = context.read<ColaboradorProvider>();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

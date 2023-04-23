@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:medocup_app/pages/agenda.page.dart';
-import 'package:medocup_app/pages/busca.page.dart';
-import 'package:medocup_app/pages/mais.page.dart';
-import 'package:medocup_app/providers/agenda.provider.dart';
+import 'package:medocup_app/pages/agenda_page.dart';
+import 'package:medocup_app/pages/busca_page.dart';
+import 'package:medocup_app/pages/configuracoes_page.dart';
+import 'package:medocup_app/providers/agenda_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {

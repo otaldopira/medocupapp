@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:medocup_app/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class MaisPage extends StatelessWidget {
   const MaisPage({Key? key}) : super(key: key);
@@ -23,7 +25,7 @@ class MaisPage extends StatelessWidget {
                     ListTile(
                       title: const Text('Sair'),
                       onTap: () {
-                        Navigator.pushReplacementNamed(context, '/login');
+                        context.read<AuthService>().sair();
                       },
                     ),
                   ],

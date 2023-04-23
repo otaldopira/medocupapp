@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="br.com.ocupamedapp.ocupamed_app">
+    package="com.medocup.app">
     <application
         android:label="ocupamed_app"
         android:name="${applicationName}"

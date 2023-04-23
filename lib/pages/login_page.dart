@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medocup_app/models/usuario.model.dart';
-import 'package:medocup_app/repositories/usuario.repository.dart';
+import 'package:medocup_app/repositories/usuario_repository.dart';
+import 'package:medocup_app/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,29 +11,24 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final usuarios = UsuarioRepository.usuarios;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _senhaController = TextEditingController();
-  bool isEmailValid = true;
   final _form = GlobalKey<FormState>();
+  final usuarios = UsuarioRepository.usuarios;
+  final _emailController = TextEditingController();
+  final _senhaController = TextEditingController();
 
-  entrar() {
-    if (_form.currentState!.validate()) {
-      String email = _emailController.text;
-      String senha = _senhaController.text;
-      autenticarUsuario(email, senha);
-    }
-  }
+  bool isLogin = true;
+  bool isLoading = false;
+  bool isEmailValid = true;
 
-  autenticarUsuario(String email, String senha) {
-    for (Usuario usuario in usuarios) {
-      if (usuario.email == email && usuario.senha == senha) {
-        return Navigator.pushReplacementNamed(context, '/home');
-      }
+  entrar() async {
+    try {
+      await context
+          .read<AuthService>()
+          .entrar(_emailController.text, _senhaController.text);
+    } on AuthException catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.mensagem)));
     }
-    return ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Usuario/Senha Inválidos')),
-    );
   }
 
   @override

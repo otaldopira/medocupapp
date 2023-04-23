@@ -1,4 +1,4 @@
-import 'package:medocup_app/models/usuario.model.dart';
+import 'package:medocup_app/models/usuario_model.dart';
 
 class UsuarioRepository {
   static List<Usuario> usuarios = [

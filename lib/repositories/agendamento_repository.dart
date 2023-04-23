@@ -1,6 +1,6 @@
-import 'package:medocup_app/models/agendamento.model.dart';
-import 'package:medocup_app/models/colaborador.model.dart';
-import 'package:medocup_app/models/endereco.model.dart';
+import 'package:medocup_app/models/agendamento_model.dart';
+import 'package:medocup_app/models/colaborador_model.dart';
+import 'package:medocup_app/models/endereco_model.dart';
 
 class AgendamentoRepository {
   static List<Agendamento> agendamentos = [

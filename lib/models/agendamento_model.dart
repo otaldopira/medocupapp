@@ -1,4 +1,4 @@
-import 'colaborador.model.dart';
+import 'colaborador_model.dart';
 
 class Agendamento {
   int id;

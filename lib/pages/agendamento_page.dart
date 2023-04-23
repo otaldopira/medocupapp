@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:medocup_app/mixins/validations.mixin.dart';
-import 'package:medocup_app/models/agendamento.model.dart';
-import 'package:medocup_app/models/colaborador.model.dart';
-import 'package:medocup_app/pages/busca.page.dart';
-import 'package:medocup_app/providers/agenda.provider.dart';
-import 'package:medocup_app/providers/agendamento.provider.dart';
+import 'package:medocup_app/mixins/validations_mixin.dart';
+import 'package:medocup_app/models/agendamento_model.dart';
+import 'package:medocup_app/models/colaborador_model.dart';
+import 'package:medocup_app/pages/busca_page.dart';
+import 'package:medocup_app/providers/agenda_provider.dart';
+import 'package:medocup_app/providers/agendamento_provider.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -42,6 +42,32 @@ class _AgendamentoPageState extends State<AgendamentoPage>
     return horariosLivres;
   }
 
+  inserirAgendamento() {
+    Agendamento novoAgendamento = Agendamento(
+      id: context.read<AgendamentoProvider>().agendamentos.last.id + 1,
+      colaborador: _colaboradorSelecionado!,
+      data: _controllerData.text,
+      hora: _controllerHora.text,
+    );
+
+    context.watch<AgendamentoProvider>().inserirAgendamento(novoAgendamento);
+
+    Navigator.popAndPushNamed(context, '/home');
+  }
+
+  editarAgendamento() {
+    Agendamento novoAgendamento = Agendamento(
+      id: widget.agendamento!.id,
+      colaborador: _colaboradorSelecionado!,
+      data: _controllerData.text,
+      hora: _controllerHora.text,
+    );
+
+    context.watch<AgendamentoProvider>().editarAgendamento(novoAgendamento);
+
+    Navigator.pop(context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -57,11 +83,10 @@ class _AgendamentoPageState extends State<AgendamentoPage>
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
-    final agenda = Provider.of<AgendaProvider>(context);
-    final agendamentos = Provider.of<AgendamentoProvider>(context);
+    final agenda = context.watch<AgendaProvider>();
+    final agendamentos = context.watch<AgendamentoProvider>();
     _controllerData.text =
         DateFormat('dd/MM/yyyy').format(agenda.dataSelecionada);
-    //Para obter a data que foi selecionada antes de vir para esta rota, caso ele alterar a data, e desistir no meio, volta para a data anterior
     List<String> horariosDisponiveis = getHorariosDisponiveis(
         agenda.horariosDisponiveis,
         agendamentos.agendamentos
@@ -69,43 +94,6 @@ class _AgendamentoPageState extends State<AgendamentoPage>
                 .format(agenda.dataSelecionada)
                 .toString()))
             .toList());
-
-    int gerarId() {
-      return agendamentos.agendamentos.last.id.toInt() + 1;
-    }
-
-    inserirAgendamento() {
-      if (_formKey.currentState!.validate()) {
-        Agendamento novoAgendamento = Agendamento(
-          id: gerarId(),
-          colaborador: _colaboradorSelecionado!,
-          data: _controllerData.text,
-          hora: _controllerHora.text,
-        );
-
-        agendamentos.inserirAgendamento(novoAgendamento);
-
-        Navigator.popAndPushNamed(context, '/home');
-      }
-      return null;
-    }
-
-    editarAgendamento() {
-      if (_formKey.currentState!.validate()) {
-        Agendamento novoAgendamento = Agendamento(
-          id: widget.agendamento!.id,
-          colaborador: _colaboradorSelecionado!,
-          data: _controllerData.text,
-          hora: _controllerHora.text,
-        );
-
-        agendamentos.editarAgendamento(novoAgendamento);
-
-        Navigator.pop(context);
-      }
-
-      return null;
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -291,9 +279,13 @@ class _AgendamentoPageState extends State<AgendamentoPage>
                     ),
                   ),
                   child: TextButton(
-                    onPressed: () => isEditing() == false
-                        ? inserirAgendamento()
-                        : editarAgendamento(),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        isEditing() == false
+                            ? inserirAgendamento()
+                            : editarAgendamento();
+                      }
+                    },
                     child: isEditing() == false
                         ? const Text('Inserir',
                             style: TextStyle(color: Colors.white, fontSize: 18))

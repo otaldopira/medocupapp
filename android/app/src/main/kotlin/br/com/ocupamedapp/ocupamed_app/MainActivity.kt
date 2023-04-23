@@ -1,4 +1,4 @@
-package br.com.ocupamedapp.ocupamed_app
+package com.medocup.app
 
 import io.flutter.embedding.android.FlutterActivity
 
