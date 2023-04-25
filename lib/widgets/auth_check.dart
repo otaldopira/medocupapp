@@ -14,7 +14,7 @@ class AuthCheck extends StatefulWidget {
 class _AuthCheckState extends State<AuthCheck> {
   @override
   Widget build(BuildContext context) {
-    AuthService auth = context.read<AuthService>();
+    AuthService auth = context.watch<AuthService>();
 
     if (auth.isLoading) {
       return loading();
@@ -27,7 +27,9 @@ class _AuthCheckState extends State<AuthCheck> {
 
   loading() {
     return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

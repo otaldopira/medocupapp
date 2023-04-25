@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medocup_app/pages/cadastro_page.dart';
 import 'package:medocup_app/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,10 @@ class MaisPage extends StatelessWidget {
                     ListTile(
                       title: const Text('Cadastros'),
                       onTap: () {
-                        Navigator.pushNamed(context, '/cadastro');
+                        Navigator.pop(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const CadastroPage()));
                       },
                     ),
                     ListTile(

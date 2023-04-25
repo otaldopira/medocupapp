@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:medocup_app/pages/cadastro_colaborador_page.dart';
 
-class cadastroPage extends StatelessWidget {
-  const cadastroPage({Key? key}) : super(key: key);
+class CadastroPage extends StatelessWidget {
+  const CadastroPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,10 @@ class cadastroPage extends StatelessWidget {
               ListTile(
                 title: const Text('Colaboradores'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/cadastro/Colaborador');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => CadastroColaboradorPage()));
                 },
               ),
             ],

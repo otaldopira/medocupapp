@@ -12,7 +12,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _form = GlobalKey<FormState>();
-  final usuarios = UsuarioRepository.usuarios;
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
 
@@ -21,11 +20,13 @@ class _LoginPageState extends State<LoginPage> {
   bool isEmailValid = true;
 
   entrar() async {
+    setState(() => isLoading = true);
     try {
       await context
           .read<AuthService>()
           .entrar(_emailController.text, _senhaController.text);
     } on AuthException catch (e) {
+      setState(() => isLoading = false);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.mensagem)));
     }
@@ -129,11 +130,15 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {
                               entrar();
                             },
-                            child: const Text(
-                              'Entrar',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            )),
+                            child: isLoading
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white, 
+                                  )
+                                : const Text(
+                                    'Entrar',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18),
+                                  )),
                       )
                     ],
                   ),

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:medocup_app/models/colaborador_model.dart';
-import 'package:medocup_app/pages/cadastro.colaborador_page.dart';
+import 'package:medocup_app/pages/cadastro_colaborador_page.dart';
 import 'package:medocup_app/pages/home_page.dart';
 import 'package:medocup_app/providers/colaborador_provider.dart';
 import 'package:medocup_app/widgets/text_info_widget.dart';

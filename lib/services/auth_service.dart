@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 
 class AuthException implements Exception {
   String mensagem;
-  AuthException({required this.mensagem});
+  AuthException(this.mensagem);
 }
 
 class AuthService extends ChangeNotifier {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   User? usuario;
   bool isLoading = true;
 
@@ -16,8 +16,9 @@ class AuthService extends ChangeNotifier {
   }
 
   _authCheck() {
-    _auth.authStateChanges().listen((User? user) {
-      usuario = (user == null) ? null : user;
+    debugPrint(usuario.toString());
+    _auth.authStateChanges().listen((User? usuario) {
+      usuario = (usuario == null) ? null : usuario;
       isLoading = false;
       notifyListeners();
     });
@@ -31,11 +32,12 @@ class AuthService extends ChangeNotifier {
   entrar(String email, String senha) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: senha);
+      _getUser();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        throw 'Usuário não encontrado';
+        throw AuthException('Usuário não encontrado');
       } else if (e.code == 'wrong-password') {
-        throw 'Senha incorreta';
+        throw AuthException('Senha incorreta');
       }
     }
   }

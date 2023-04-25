@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medocup_app/pages/agenda_page.dart';
+import 'package:medocup_app/pages/agendamento_page.dart';
 import 'package:medocup_app/pages/busca_page.dart';
 import 'package:medocup_app/pages/configuracoes_page.dart';
 import 'package:medocup_app/providers/agenda_provider.dart';
@@ -34,10 +35,10 @@ class _HomePageState extends State<HomePage> {
             paginaAtual = value;
           },
         ),
-        children: [
+        children: const [
           AgendaPage(),
-          const BuscaPage(tipoSelecao: TipoSelecao.verDetalhes),
-          const MaisPage()
+          BuscaPage(tipoSelecao: TipoSelecao.verDetalhes),
+          MaisPage()
         ],
       ),
       floatingActionButton: paginaAtual == 0
@@ -47,8 +48,10 @@ class _HomePageState extends State<HomePage> {
               child: FloatingActionButton(
                 onPressed: () {
                   debugPrint(agenda.dataSelecionada.toString());
-                  Navigator.pushNamed(context, '/agendamento',
-                      arguments: agenda.dataSelecionada);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const AgendamentoPage()));
                 },
                 elevation: 2,
                 backgroundColor: Colors.green[700],

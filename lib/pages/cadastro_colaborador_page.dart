@@ -154,7 +154,7 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(bottom: 20),
+                    padding: const EdgeInsets.only(bottom: 20),
                     child: InkWell(
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,

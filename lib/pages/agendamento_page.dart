@@ -5,6 +5,7 @@ import 'package:medocup_app/mixins/validations_mixin.dart';
 import 'package:medocup_app/models/agendamento_model.dart';
 import 'package:medocup_app/models/colaborador_model.dart';
 import 'package:medocup_app/pages/busca_page.dart';
+import 'package:medocup_app/pages/home_page.dart';
 import 'package:medocup_app/providers/agenda_provider.dart';
 import 'package:medocup_app/providers/agendamento_provider.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -52,7 +53,7 @@ class _AgendamentoPageState extends State<AgendamentoPage>
 
     context.watch<AgendamentoProvider>().inserirAgendamento(novoAgendamento);
 
-    Navigator.popAndPushNamed(context, '/home');
+    Navigator.pop(context, MaterialPageRoute(builder: (_) => const HomePage()));
   }
 
   editarAgendamento() {
