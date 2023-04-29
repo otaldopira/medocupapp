@@ -29,6 +29,22 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<String?> registrar(String email, String senha) async {
+    try {
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: senha);
+      final user = userCredential.user;
+      print(user?.uid);
+      return user?.uid;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        throw AuthException('A senha é muito fraca!');
+      } else if (e.code == 'email-already-in-use') {
+        throw AuthException('Este email já está cadastrado');
+      }
+    }
+  }
+
   entrar(String email, String senha) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: senha);

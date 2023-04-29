@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medocup_app/pages/cadastro_colaborador_page.dart';
+import 'package:medocup_app/pages/cadastro_profissional.dart';
 
 class CadastroPage extends StatelessWidget {
   const CadastroPage({Key? key}) : super(key: key);
@@ -20,6 +21,15 @@ class CadastroPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (_) => CadastroColaboradorPage()));
+                },
+              ),
+              ListTile(
+                title: const Text('Profissionais'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const CadastroProfissionalPage()));
                 },
               ),
             ],

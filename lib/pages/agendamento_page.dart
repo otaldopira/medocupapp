@@ -45,13 +45,12 @@ class _AgendamentoPageState extends State<AgendamentoPage>
 
   inserirAgendamento() {
     Agendamento novoAgendamento = Agendamento(
-      id: context.read<AgendamentoProvider>().agendamentos.last.id + 1,
       colaborador: _colaboradorSelecionado!,
       data: _controllerData.text,
       hora: _controllerHora.text,
     );
 
-    context.watch<AgendamentoProvider>().inserirAgendamento(novoAgendamento);
+    context.read<AgendamentoProvider>().inserirAgendamento(novoAgendamento);
 
     Navigator.pop(context, MaterialPageRoute(builder: (_) => const HomePage()));
   }
@@ -64,7 +63,7 @@ class _AgendamentoPageState extends State<AgendamentoPage>
       hora: _controllerHora.text,
     );
 
-    context.watch<AgendamentoProvider>().editarAgendamento(novoAgendamento);
+    //context.watch<AgendamentoProvider>().editarAgendamento(novoAgendamento);
 
     Navigator.pop(context);
   }

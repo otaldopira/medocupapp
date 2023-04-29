@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:medocup_app/models/agendamento_model.dart';
 import 'package:medocup_app/pages/agendamento_page.dart';
 import 'package:medocup_app/providers/agendamento_provider.dart';
-import 'package:medocup_app/widgets/text_info_widget.dart';
-import 'package:intl/intl.dart';
+import 'package:medocup_app/widgets/text_info.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 class DetalhesAgendamentos extends StatefulWidget {
   final Agendamento agendamento;
-  DetalhesAgendamentos({super.key, required this.agendamento});
+  const DetalhesAgendamentos({super.key, required this.agendamento});
 
   @override
   State<DetalhesAgendamentos> createState() => _DetalhesAgendamentosState();
@@ -70,8 +69,28 @@ class _DetalhesAgendamentosState extends State<DetalhesAgendamentos> {
                             ),
                             CupertinoActionSheetAction(
                               onPressed: () => {
-                                agendamentos.deletarAgendamento(
-                                    context, widget.agendamento.id),
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text(
+                                        'Você deseja remover este agendamento ?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          agendamentos.deletarAgendamento(
+                                              widget.agendamento.id.toString());
+                                        },
+                                        child: const Text('Sim'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Não'),
+                                      ),
+                                    ],
+                                  ),
+                                )
                               },
                               isDestructiveAction: true,
                               child: const Text('Excluir'),

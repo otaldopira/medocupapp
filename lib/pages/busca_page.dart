@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:medocup_app/models/colaborador_model.dart';
 import 'package:medocup_app/pages/detalhes_colaborador_page.dart';
-import 'package:medocup_app/repositories/colaborador_repository.dart';
+import 'package:medocup_app/providers/colaborador_provider.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 
 enum TipoSelecao { selecionar, verDetalhes }
 
@@ -19,7 +20,9 @@ class _BuscaPageState extends State<BuscaPage> {
   final buscaColaborador = TextEditingController();
 
   buscarColaborador(String pattern) {
-    for (Colaborador colaborador in ColaboradorRepository.colaboradores) {
+    debugPrint('to aqui');
+    for (Colaborador colaborador
+        in context.read<ColaboradorProvider>().colaboradores) {
       if (!colaborador.nome.toLowerCase().contains(pattern.toLowerCase())) {
         _colaboradoresFiltro.remove(colaborador);
       }
@@ -75,7 +78,7 @@ class _BuscaPageState extends State<BuscaPage> {
                           border: InputBorder.none),
                       onChanged: (pattern) {
                         setState(() {
-                          buscarColaborador(buscaColaborador.text);
+                          buscarColaborador(pattern);
                         });
                       },
                     ),

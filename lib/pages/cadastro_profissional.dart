@@ -3,141 +3,95 @@ import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:intl/intl.dart';
 import 'package:medocup_app/mixins/validations_mixin.dart';
-import 'package:medocup_app/models/colaborador_model.dart';
-import 'package:medocup_app/models/endereco_model.dart';
-import 'package:medocup_app/providers/colaborador_provider.dart';
+import 'package:medocup_app/models/profissional_model.dart';
+import 'package:medocup_app/providers/profissional_provider.dart';
 import 'package:provider/provider.dart';
 
-class CadastroColaboradorPage extends StatefulWidget {
-  Colaborador? colaborador;
-  CadastroColaboradorPage({Key? key, this.colaborador}) : super(key: key);
+class CadastroProfissionalPage extends StatefulWidget {
+  final Profissional? profissional;
+  const CadastroProfissionalPage({Key? key, this.profissional})
+      : super(key: key);
 
   @override
-  State<CadastroColaboradorPage> createState() =>
-      _CadastroColaboradorPageState();
+  State<CadastroProfissionalPage> createState() =>
+      _CadastroProfissionalPageState();
 }
 
-class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
+class _CadastroProfissionalPageState extends State<CadastroProfissionalPage>
     with ValidacoesMixin {
   final formKey = GlobalKey<FormState>();
 
-  bool isEditing() => widget.colaborador != null;
+  bool isEditing() => widget.profissional != null;
 
   final List<String> _generos = [
     'Masculino',
     'Feminino',
   ];
-  final List<String> estados = [
-    'AC',
-    'AL',
-    'AP',
-    'AM',
-    'BA',
-    'CE',
-    'DF',
-    'ES',
-    'GO',
-    'MA',
-    'MT',
-    'MS',
-    'MG',
-    'PA',
-    'PB',
-    'PR',
-    'PE',
-    'PI',
-    'RJ',
-    'RN',
-    'RS',
-    'RO',
-    'RR',
-    'SC',
-    'SP',
-    'SE',
-    'TO'
-  ];
 
   // dados pessoais
   final _nome = TextEditingController();
+  final _dataNascimento = TextEditingController();
   String? _generoSelecionado;
   final _cpf = TextEditingController();
-  final _rg = TextEditingController();
-  final _dataNascimento = TextEditingController();
-  final _celular = TextEditingController();
+  final _crm = TextEditingController();
+  final _email = TextEditingController();
+  final _senha = TextEditingController();
 
-  // dados de endereço
-  final _cep = TextEditingController();
-  String? _estadoSelecionado;
-  final _cidade = TextEditingController();
-  final _bairro = TextEditingController();
-  final _rua = TextEditingController();
-
-  cadastrarColaborador() {
-    Colaborador colaborador = Colaborador(
-      id: '',
-      nome: _nome.text,
-      sexo: _generoSelecionado.toString(),
-      cpf: _cpf.text,
-      rg: _rg.text,
-      dataNascimento: _dataNascimento.text,
-      celular: _celular.text,
-      endereco: Endereco(
-          cep: _cep.text,
-          estado: _estadoSelecionado.toString(),
-          cidade: _cidade.text,
-          bairro: _bairro.text,
-          rua: _rua.text),
-    );
+  cadastrarProfissional() {
+    Profissional profissional = Profissional(
+        nome: _nome.text,
+        dataNascimento: _dataNascimento.text,
+        sexo: _generoSelecionado.toString(),
+        cpf: _cpf.text,
+        crm: _crm.text,
+        email: _email.text,
+        senha: _senha.text);
     if (formKey.currentState!.validate()) {
-      context.read<ColaboradorProvider>().inserirColaborador(colaborador);
+      context.read<ProfissionalProvider>().inserirProfissional(profissional);
       Navigator.pop(context);
     }
     return null;
   }
 
-  editarColaborador() {
-    Colaborador colaborador = Colaborador(
-      nome: _nome.text,
-      sexo: _generoSelecionado.toString(),
-      cpf: _cpf.text,
-      rg: _rg.text,
-      dataNascimento: _dataNascimento.text,
-      celular: _celular.text,
-      endereco: Endereco(
-          cep: _cep.text,
-          estado: _estadoSelecionado.toString(),
-          cidade: _cidade.text,
-          bairro: _bairro.text,
-          rua: _rua.text),
-    );
-    if (formKey.currentState!.validate()) {
-      context.watch<ColaboradorProvider>().editarColaborador(colaborador);
-      Navigator.pop(context, colaborador);
-    }
-    return null;
-  }
+  // editarColaborador() {
+  //   Colaborador colaborador = Colaborador(
+  //     nome: _nome.text,
+  //     sexo: _generoSelecionado.toString(),
+  //     cpf: _cpf.text,
+  //     rg: _rg.text,
+  //     dataNascimento: _dataNascimento.text,
+  //     celular: _celular.text,
+  //     endereco: Endereco(
+  //         cep: _cep.text,
+  //         estado: _estadoSelecionado.toString(),
+  //         cidade: _cidade.text,
+  //         bairro: _bairro.text,
+  //         rua: _rua.text),
+  //   );
+  //   if (formKey.currentState!.validate()) {
+  //     context.watch<ColaboradorProvider>().editarColaborador(colaborador);
+  //     Navigator.pop(context, colaborador);
+  //   }
+  //   return null;
+  // }
 
   @override
   void initState() {
     super.initState();
     if (isEditing()) {
-      _nome.text = widget.colaborador!.nome;
-      _generoSelecionado = widget.colaborador!.sexo;
-      _cpf.text = widget.colaborador!.cpf;
-      _rg.text = widget.colaborador!.rg;
-      _dataNascimento.text = widget.colaborador!.dataNascimento;
-      _celular.text = widget.colaborador!.celular;
-      _cep.text = widget.colaborador!.endereco.cep;
-      _estadoSelecionado = widget.colaborador!.endereco.estado;
-      _cidade.text = widget.colaborador!.endereco.cidade;
-      _bairro.text = widget.colaborador!.endereco.bairro;
-      _rua.text = widget.colaborador!.endereco.rua;
+      _nome.text = widget.profissional!.nome;
+      _dataNascimento.text = widget.profissional!.dataNascimento;
+      _generoSelecionado = widget.profissional!.sexo;
+      _cpf.text = widget.profissional!.cpf;
+      _crm.text = widget.profissional!.crm;
+      _email.text = widget.profissional!.email;
+      _senha.text = widget.profissional!.senha;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final colaboradores = context.read<ColaboradorProvider>();
+    final profissionais = context.watch<ProfissionalProvider>();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -167,7 +121,7 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                     ),
                   ),
                   const Text(
-                    'Colaborador',
+                    'Profissional',
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -225,21 +179,6 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                     },
                   ),
                   TextFormField(
-                    decoration: const InputDecoration(labelText: 'RG'),
-                    controller: _rg,
-                    inputFormatters: [MaskedInputFormatter('##\.###\.###\-#')],
-                    onSaved: (value) {
-                      _rg.text = value!;
-                    },
-                    validator: (value) => combine(
-                      [
-                        () => campoVazio(value),
-                        () => rg(value),
-                      ],
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  TextFormField(
                     decoration: const InputDecoration(labelText: 'CPF'),
                     controller: _cpf,
                     inputFormatters: [
@@ -257,11 +196,11 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
-                    decoration: const InputDecoration(labelText: 'Celular'),
-                    controller: _celular,
-                    inputFormatters: [MaskedInputFormatter('(##) #####-####')],
+                    decoration: const InputDecoration(labelText: 'CRM'),
+                    controller: _crm,
+                    inputFormatters: [MaskedInputFormatter('######')],
                     onSaved: (value) {
-                      _celular.text = value!;
+                      _crm.text = value!;
                     },
                     validator: (value) => combine(
                       [
@@ -273,7 +212,7 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                   const Padding(
                     padding: EdgeInsets.only(top: 20, bottom: 20),
                     child: Text(
-                      'Endereço',
+                      'Autenticação',
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
@@ -281,11 +220,23 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                     ),
                   ),
                   TextFormField(
-                    decoration: const InputDecoration(labelText: 'CEP'),
-                    controller: _cep,
-                    inputFormatters: [MaskedInputFormatter('#####\-###')],
+                    decoration: const InputDecoration(labelText: 'E-mail'),
+                    controller: _email,
                     onSaved: (value) {
-                      _cep.text = value!;
+                      _email.text = value!;
+                    },
+                    validator: (value) => combine(
+                      [
+                        () => campoVazio(value),
+                      ],
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'Senha'),
+                    controller: _senha,
+                    obscureText: true,
+                    onSaved: (value) {
+                      _senha.text = value!;
                     },
                     validator: (value) => combine(
                       [
@@ -293,68 +244,6 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                       ],
                     ),
                     keyboardType: TextInputType.number,
-                  ),
-                  DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(labelText: 'Estado'),
-                    items: estados.map((estado) {
-                      return DropdownMenuItem<String>(
-                        value: estado,
-                        child: Text(estado),
-                      );
-                    }).toList(),
-                    value: _estadoSelecionado,
-                    validator: (value) => campoVazio(value),
-                    onChanged: (value) {
-                      setState(() {
-                        _estadoSelecionado = value;
-                      });
-                    },
-                  ),
-                  TextFormField(
-                    decoration: const InputDecoration(labelText: 'Cidade'),
-                    controller: _cidade,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp('[a-zA-Z á-úÁ-Ú]'),
-                      ),
-                    ],
-                    onSaved: (value) {
-                      _cidade.text = value!;
-                    },
-                    validator: (value) => combine(
-                      [
-                        () => campoVazio(value),
-                      ],
-                    ),
-                  ),
-                  TextFormField(
-                    decoration: const InputDecoration(labelText: 'Bairro'),
-                    controller: _bairro,
-                    onSaved: (value) {
-                      _bairro.text = value!;
-                    },
-                    validator: (value) => combine(
-                      [
-                        () => campoVazio(value),
-                      ],
-                    ),
-                  ),
-                  TextFormField(
-                    decoration: const InputDecoration(labelText: 'Rua'),
-                    controller: _rua,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp('[a-zA-Z0-9À-ÿ ,./()-]'),
-                      ),
-                    ],
-                    onSaved: (value) {
-                      _rua.text = value!;
-                    },
-                    validator: (value) => combine(
-                      [
-                        () => campoVazio(value),
-                      ],
-                    ),
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 30, left: 25, right: 25),
@@ -364,9 +253,10 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     child: TextButton(
                         onPressed: () {
-                          isEditing() == false
-                              ? cadastrarColaborador()
-                              : editarColaborador();
+                          cadastrarProfissional();
+                          // isEditing() == false
+                          //     ? cadastrarColaborador()
+                          //     : editarColaborador();
                         },
                         child: isEditing() == false
                             ? const Text(

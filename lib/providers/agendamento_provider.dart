@@ -1,9 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:medocup_app/databases/db_firestore.dart';
 import 'package:medocup_app/models/agendamento_model.dart';
-import 'package:medocup_app/repositories/agendamento_repository.dart';
+import 'package:medocup_app/models/colaborador_model.dart';
+import 'package:medocup_app/models/endereco_model.dart';
 
 class AgendamentoProvider extends ChangeNotifier {
-  List<Agendamento> _agendamentos = AgendamentoRepository.agendamentos;
+  final List<Agendamento> _agendamentos = [];
+  late FirebaseFirestore db;
+
+  AgendamentoProvider() {
+    _startRepository();
+  }
+
+  _startRepository() async {
+    await _startFirestore();
+    lerAgendamentos();
+  }
+
+  _startFirestore() {
+    db = DBfirestore.get();
+  }
+
   List<Agendamento> get agendamentos => _agendamentos;
 
   List<Agendamento> getAgendamentosDaDataSelecionada(String dataSelecionada) {
@@ -12,17 +30,59 @@ class AgendamentoProvider extends ChangeNotifier {
         .toList();
   }
 
-  inserirAgendamento(Agendamento agendamento) {
-    _agendamentos.add(agendamento);
+  inserirAgendamento(Agendamento agendamento) async {
+    String id = db.collection('agendamentos/').doc().id;
+    await db.collection('agendamentos/').doc(id).set({
+      'id': id,
+      'colaborador': {
+        'id': agendamento.colaborador.id,
+        'nome': agendamento.colaborador.nome,
+        'sexo': agendamento.colaborador.sexo,
+        'cpf': agendamento.colaborador.cpf,
+        'rg': agendamento.colaborador.rg,
+        'dataNascimento': agendamento.colaborador.dataNascimento,
+        'celular': agendamento.colaborador.celular,
+        'endereco': {
+          'cep': agendamento.colaborador.endereco.cep,
+          'estado': agendamento.colaborador.endereco.estado,
+          'cidade': agendamento.colaborador.endereco.cidade,
+          'bairro': agendamento.colaborador.endereco.bairro,
+          'rua': agendamento.colaborador.endereco.rua,
+        },
+      },
+      'data': agendamento.data,
+      'hora': agendamento.hora
+    }).then((value) => adicionarLista(id));
     notifyListeners();
   }
 
-  editarAgendamento(Agendamento agendamento) {
-    if (agendamento == null) {
-      return null;
-    }
+  adicionarLista(String id) async {
+    await db.collection('agendamentos/').doc(id).get().then((doc) {
+      var agendamento = Agendamento(
+          id: id,
+          colaborador: Colaborador(
+            id: doc['colaborador']['id'],
+            nome: doc['colaborador']['nome'],
+            sexo: doc['colaborador']['sexo'],
+            cpf: doc['colaborador']['cpf'],
+            rg: doc['colaborador']['rg'],
+            dataNascimento: doc['colaborador']['dataNascimento'],
+            celular: doc['colaborador']['celular'],
+            endereco: Endereco(
+                cep: doc['colaborador']['endereco']['cep'],
+                estado: doc['colaborador']['endereco']['estado'],
+                cidade: doc['colaborador']['endereco']['cidade'],
+                bairro: doc['colaborador']['endereco']['bairro'],
+                rua: doc['colaborador']['endereco']['rua']),
+          ),
+          data: doc['data'],
+          hora: doc['hora']);
+      _agendamentos.add(agendamento);
+    });
+  }
 
-    var indice = agendamentos.indexWhere((a) => a.id == agendamento.id);
+  editarAgendamento(Agendamento agendamento) async {
+    var indice = _agendamentos.indexWhere((a) => a.id == agendamento.id);
 
     if (indice == -1) {
       return null;
@@ -30,32 +90,61 @@ class AgendamentoProvider extends ChangeNotifier {
 
     _agendamentos[indice] = agendamento;
 
+    await db.collection('agendamentos/').doc(agendamento.id.toString()).update({
+      'colaborador': {
+        'id': agendamento.colaborador.id,
+        'nome': agendamento.colaborador.nome,
+        'sexo': agendamento.colaborador.sexo,
+        'cpf': agendamento.colaborador.cpf,
+        'rg': agendamento.colaborador.rg,
+        'dataNascimento': agendamento.colaborador.dataNascimento,
+        'celular': agendamento.colaborador.celular,
+        'endereco': {
+          'cep': agendamento.colaborador.endereco.cep,
+          'estado': agendamento.colaborador.endereco.estado,
+          'cidade': agendamento.colaborador.endereco.cidade,
+          'bairro': agendamento.colaborador.endereco.bairro,
+          'rua': agendamento.colaborador.endereco.rua,
+        },
+      },
+      'data': agendamento.data,
+      'hora': agendamento.hora
+    });
+
     notifyListeners();
   }
 
-  deletarAgendamento(BuildContext context, int id) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Você deseja remover este agendamento ?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              _agendamentos
-                  .removeAt(agendamentos.indexWhere((a) => a.id == id));
-              notifyListeners();
-              Navigator.popUntil(context, ModalRoute.withName('/home'));
-            },
-            child: const Text('Sim'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Não'),
-          ),
-        ],
-      ),
-    );
+  lerAgendamentos() async {
+    if (_agendamentos.isEmpty) {
+      final snapshot = await db.collection('agendamentos').get();
+      for (var doc in snapshot.docs) {
+        var agendamento = Agendamento(
+            colaborador: Colaborador(
+              id: doc['colaborador']['id'],
+              nome: doc['colaborador']['nome'],
+              sexo: doc['colaborador']['sexo'],
+              cpf: doc['colaborador']['cpf'],
+              rg: doc['colaborador']['rg'],
+              dataNascimento: doc['colaborador']['dataNascimento'],
+              celular: doc['colaborador']['celular'],
+              endereco: Endereco(
+                  cep: doc['colaborador']['endereco']['cep'],
+                  estado: doc['colaborador']['endereco']['estado'],
+                  cidade: doc['colaborador']['endereco']['cidade'],
+                  bairro: doc['colaborador']['endereco']['bairro'],
+                  rua: doc['colaborador']['endereco']['rua']),
+            ),
+            data: doc['data'],
+            hora: doc['hora']);
+        _agendamentos.add(agendamento);
+      }
+      notifyListeners();
+    }
+  }
+
+  deletarAgendamento(String id) async {
+    await db.collection('agendamentos').doc(id.toString()).delete();
+    _agendamentos.removeAt(agendamentos.indexWhere((a) => a.id == id));
+    notifyListeners();
   }
 }

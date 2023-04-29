@@ -20,10 +20,10 @@ class MaisPage extends StatelessWidget {
                     ListTile(
                       title: const Text('Cadastros'),
                       onTap: () {
-                        Navigator.pop(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const CadastroPage()));
+                                builder: (context) => CadastroPage()));
                       },
                     ),
                     ListTile(

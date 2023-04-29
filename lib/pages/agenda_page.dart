@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:medocup_app/providers/agenda_provider.dart';
 import 'package:medocup_app/providers/agendamento_provider.dart';
-import 'package:medocup_app/widgets/card_horario_widget.dart';
+import 'package:medocup_app/widgets/horario_card.dart';
 import 'package:provider/provider.dart';
 import 'package:weekly_date_picker/weekly_date_picker.dart';
 

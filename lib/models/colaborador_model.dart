@@ -1,7 +1,7 @@
 import 'package:medocup_app/models/endereco_model.dart';
 
 class Colaborador {
-  int id;
+  String? id;
   String nome;
   String sexo;
   String cpf;
@@ -11,7 +11,7 @@ class Colaborador {
   Endereco endereco;
 
   Colaborador({
-    required this.id,
+    this.id,
     required this.nome,
     required this.sexo,
     required this.cpf,
@@ -20,5 +20,4 @@ class Colaborador {
     required this.celular,
     required this.endereco,
   });
-
 }

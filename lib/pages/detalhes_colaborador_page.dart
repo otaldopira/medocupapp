@@ -5,7 +5,7 @@ import 'package:medocup_app/models/colaborador_model.dart';
 import 'package:medocup_app/pages/cadastro_colaborador_page.dart';
 import 'package:medocup_app/pages/home_page.dart';
 import 'package:medocup_app/providers/colaborador_provider.dart';
-import 'package:medocup_app/widgets/text_info_widget.dart';
+import 'package:medocup_app/widgets/text_info.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -75,8 +75,28 @@ class _DetalhesColaboradorState extends State<DetalhesColaborador> {
                             ),
                             CupertinoActionSheetAction(
                               onPressed: () => {
-                                colaboradores.deletarColaborador(
-                                    context, widget.colaborador.id),
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text(
+                                        'Você deseja remover este Colaborador ?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          colaboradores.deletarColaborador(
+                                              widget.colaborador.id.toString());
+                                        },
+                                        child: const Text('Sim'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Não'),
+                                      ),
+                                    ],
+                                  ),
+                                )
                               },
                               isDestructiveAction: true,
                               child: const Text('Excluir'),
