@@ -34,7 +34,6 @@ class AuthService extends ChangeNotifier {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: senha);
       final user = userCredential.user;
-      print(user?.uid);
       return user?.uid;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -43,6 +42,7 @@ class AuthService extends ChangeNotifier {
         throw AuthException('Este email já está cadastrado');
       }
     }
+    return null;
   }
 
   entrar(String email, String senha) async {
@@ -55,6 +55,12 @@ class AuthService extends ChangeNotifier {
       } else if (e.code == 'wrong-password') {
         throw AuthException('Senha incorreta');
       }
+    }
+  }
+
+  removerUsuario(String uid) async {
+    for (final providerProfile in usuario!.providerData) {
+      
     }
   }
 

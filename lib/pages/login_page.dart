@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medocup_app/repositories/usuario_repository.dart';
 import 'package:medocup_app/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -132,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                             },
                             child: isLoading
                                 ? const CircularProgressIndicator(
-                                    color: Colors.white, 
+                                    color: Colors.white,
                                   )
                                 : const Text(
                                     'Entrar',

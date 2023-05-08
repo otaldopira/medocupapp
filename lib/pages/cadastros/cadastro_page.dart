@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:medocup_app/pages/cadastro_colaborador_page.dart';
-import 'package:medocup_app/pages/cadastro_profissional.dart';
+import 'package:medocup_app/pages/cadastros/cadastro_colaborador_page.dart';
+import 'package:medocup_app/pages/cadastros/cadastro_profissional.dart';
 
 class CadastroPage extends StatelessWidget {
   const CadastroPage({Key? key}) : super(key: key);

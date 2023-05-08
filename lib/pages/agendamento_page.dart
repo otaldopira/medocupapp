@@ -34,7 +34,6 @@ class _AgendamentoPageState extends State<AgendamentoPage>
   List<String> getHorariosDisponiveis(
       List<String> horariosDisponiveis, List<Agendamento> agendamentos) {
     List<String> horariosLivres = horariosDisponiveis;
-    debugPrint(horariosDisponiveis.toString());
     for (Agendamento agendamento in agendamentos) {
       if (horariosDisponiveis.contains(agendamento.hora)) {
         horariosLivres.remove(agendamento.hora);
@@ -82,18 +81,12 @@ class _AgendamentoPageState extends State<AgendamentoPage>
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     final agenda = context.watch<AgendaProvider>();
     final agendamentos = context.watch<AgendamentoProvider>();
     _controllerData.text =
         DateFormat('dd/MM/yyyy').format(agenda.dataSelecionada);
-    List<String> horariosDisponiveis = getHorariosDisponiveis(
-        agenda.horariosDisponiveis,
-        agendamentos.agendamentos
-            .where((dia) => dia.data.contains(DateFormat('dd/MM/yyyy')
-                .format(agenda.dataSelecionada)
-                .toString()))
-            .toList());
+    late List<String>? horariosDisponiveis;
 
     return Scaffold(
       appBar: AppBar(
@@ -109,7 +102,7 @@ class _AgendamentoPageState extends State<AgendamentoPage>
         padding: const EdgeInsets.only(top: 20, left: 40, right: 30),
         child: SingleChildScrollView(
           child: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -171,38 +164,50 @@ class _AgendamentoPageState extends State<AgendamentoPage>
                             ],
                           ),
                         ),
-                        onTap: () => showModalBottomSheet(
-                          context: context,
-                          builder: (context) => SizedBox(
-                            height: 250,
-                            child: Column(
-                              children: [
-                                TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Selecionar')),
-                                Expanded(
-                                  child: CupertinoPicker(
-                                    onSelectedItemChanged: (value) =>
-                                        setState(() {
-                                      _controllerHora.text =
-                                          agenda.horario(value);
-                                    }),
-                                    itemExtent: 32,
-                                    // This is called when selected item is changed.
-                                    children: List<Widget>.generate(
-                                      horariosDisponiveis.length,
-                                      (index) {
-                                        return Text(
-                                          horariosDisponiveis[index],
-                                        );
-                                      },
+                        onTap: () {
+                          setState(() {
+                            horariosDisponiveis = getHorariosDisponiveis(
+                                agenda.horariosDisponiveis,
+                                agendamentos.agendamentos
+                                    .where((dia) => dia.data.contains(
+                                        DateFormat('dd/MM/yyyy')
+                                            .format(agenda.dataSelecionada)
+                                            .toString()))
+                                    .toList());
+                          });
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => SizedBox(
+                              height: 250,
+                              child: Column(
+                                children: [
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Selecionar')),
+                                  Expanded(
+                                    child: CupertinoPicker(
+                                      onSelectedItemChanged: (value) =>
+                                          setState(() {
+                                        _controllerHora.text =
+                                            agenda.horario(value);
+                                      }),
+                                      itemExtent: 32,
+                                      // This is called when selected item is changed.
+                                      children: List<Widget>.generate(
+                                        horariosDisponiveis!.length,
+                                        (index) {
+                                          return Text(
+                                            horariosDisponiveis![index],
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                         keyboardType: TextInputType.none,
                       ),
                     ),
@@ -280,7 +285,7 @@ class _AgendamentoPageState extends State<AgendamentoPage>
                   ),
                   child: TextButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                      if (formKey.currentState!.validate()) {
                         isEditing() == false
                             ? inserirAgendamento()
                             : editarAgendamento();

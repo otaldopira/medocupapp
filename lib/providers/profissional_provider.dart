@@ -24,9 +24,8 @@ class ProfissionalProvider extends ChangeNotifier {
     db = DBfirestore.get();
   }
 
-  inserirProfissional(Profissional profissional) async {
-    String uid =
-        await autenticarProfissional(profissional.email, profissional.senha);
+  inserirProfissional(Profissional profissional, email, senha) async {
+    String uid = await autenticarProfissional(email, senha);
 
     if (uid.contains(' ')) {
       return uid;
@@ -39,8 +38,6 @@ class ProfissionalProvider extends ChangeNotifier {
       'sexo': profissional.sexo,
       'cpf': profissional.cpf,
       'crm': profissional.crm,
-      'email': profissional.email,
-      'senha': profissional.senha,
     }).then((value) => adicionarLista(uid));
 
     notifyListeners();
@@ -64,8 +61,6 @@ class ProfissionalProvider extends ChangeNotifier {
         sexo: doc['sexo'],
         cpf: doc['cpf'],
         crm: doc['crm'],
-        email: doc['email'],
-        senha: doc['senha'],
       );
       _profissionais.add(profissional);
     });
@@ -82,8 +77,6 @@ class ProfissionalProvider extends ChangeNotifier {
           sexo: doc['sexo'],
           cpf: doc['cpf'],
           crm: doc['crm'],
-          email: doc['email'],
-          senha: doc['senha'],
         );
 
         _profissionais.add(profissional);
@@ -108,15 +101,12 @@ class ProfissionalProvider extends ChangeNotifier {
       'sexo': profissional.sexo,
       'cpf': profissional.cpf,
       'crm': profissional.crm,
-      'email': profissional.email,
-      'senha': profissional.senha,
     });
 
     notifyListeners();
   }
 
   deletarProfissional(Profissional profissional) async {
-    await db.collection('profissionais/').doc(profissional.id).delete();
     _profissionais.remove(profissional);
     notifyListeners();
   }

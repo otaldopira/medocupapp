@@ -39,15 +39,16 @@ class _CadastroProfissionalPageState extends State<CadastroProfissionalPage>
 
   cadastrarProfissional() {
     Profissional profissional = Profissional(
-        nome: _nome.text,
-        dataNascimento: _dataNascimento.text,
-        sexo: _generoSelecionado.toString(),
-        cpf: _cpf.text,
-        crm: _crm.text,
-        email: _email.text,
-        senha: _senha.text);
+      nome: _nome.text,
+      dataNascimento: _dataNascimento.text,
+      sexo: _generoSelecionado.toString(),
+      cpf: _cpf.text,
+      crm: _crm.text,
+    );
     if (formKey.currentState!.validate()) {
-      context.read<ProfissionalProvider>().inserirProfissional(profissional);
+      context
+          .read<ProfissionalProvider>()
+          .inserirProfissional(profissional, _email, _senha);
       Navigator.pop(context);
     }
     return null;
@@ -84,8 +85,6 @@ class _CadastroProfissionalPageState extends State<CadastroProfissionalPage>
       _generoSelecionado = widget.profissional!.sexo;
       _cpf.text = widget.profissional!.cpf;
       _crm.text = widget.profissional!.crm;
-      _email.text = widget.profissional!.email;
-      _senha.text = widget.profissional!.senha;
     }
   }
 

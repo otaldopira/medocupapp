@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medocup_app/models/colaborador_model.dart';
-import 'package:medocup_app/pages/detalhes_colaborador_page.dart';
+import 'package:medocup_app/pages/detalhes/detalhes_colaborador_page.dart';
 import 'package:medocup_app/providers/colaborador_provider.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
