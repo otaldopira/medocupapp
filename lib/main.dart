@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:medocup_app/firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:medocup_app/pages/cadastros/agenda_medico_page.dart';
+import 'package:medocup_app/pages/cadastros/cadasto.dart';
 import 'package:medocup_app/pages/home_page.dart';
 import 'package:medocup_app/providers/agenda_provider.dart';
 import 'package:medocup_app/providers/agendamento_provider.dart';
@@ -18,7 +20,9 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthService()),
-        ChangeNotifierProvider(create: (context) => AgendaProvider()),
+        ChangeNotifierProvider(
+            create: (context) =>
+                AgendaProvider(auth: context.read<AuthService>())),
         ChangeNotifierProvider(create: (context) => AgendamentoProvider()),
         ChangeNotifierProvider(create: (context) => ColaboradorProvider()),
         ChangeNotifierProvider(
@@ -37,8 +41,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      //home: AuthCheck(),
-      home: HomePage(),
+      home: AuthCheck(),
+      // home: ConfiguracaoAgenda(),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate

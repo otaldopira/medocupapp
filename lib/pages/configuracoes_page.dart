@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medocup_app/pages/cadastros/agenda_medico_page.dart';
 import 'package:medocup_app/pages/cadastros/cadastro_page.dart';
 import 'package:medocup_app/services/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -40,7 +41,8 @@ class MaisPage extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const CadastroPage()));
+                                builder: (context) =>
+                                    const ConfiguracaoAgenda()));
                       },
                     ),
                     ListTile(

@@ -141,6 +141,7 @@ class _AgendamentoPageState extends State<AgendamentoPage>
                           if (escolherData != null) {
                             agenda.setDataSelecionada(escolherData);
                             setState(() {
+                              _controllerHora.text = '';
                               _controllerData.text =
                                   DateFormat('dd/MM/yyyy').format(escolherData);
                             });
