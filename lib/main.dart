@@ -23,7 +23,9 @@ void main() async {
         ChangeNotifierProvider(
             create: (context) =>
                 AgendaProvider(auth: context.read<AuthService>())),
-        ChangeNotifierProvider(create: (context) => AgendamentoProvider()),
+        ChangeNotifierProvider(
+            create: (context) =>
+                AgendamentoProvider(auth: context.read<AuthService>())),
         ChangeNotifierProvider(create: (context) => ColaboradorProvider()),
         ChangeNotifierProvider(
             create: (context) =>

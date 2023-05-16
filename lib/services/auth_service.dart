@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+
 class AuthException implements Exception {
   String mensagem;
   AuthException(this.mensagem);
@@ -16,7 +17,6 @@ class AuthService extends ChangeNotifier {
   }
 
   _authCheck() {
-    debugPrint(usuario.toString());
     _auth.authStateChanges().listen((User? usuario) {
       usuario = (usuario == null) ? null : usuario;
       isLoading = false;
@@ -58,11 +58,6 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  removerUsuario(String uid) async {
-    for (final providerProfile in usuario!.providerData) {
-      
-    }
-  }
 
   sair() async {
     await _auth.signOut();

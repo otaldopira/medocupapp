@@ -43,7 +43,7 @@ class AgendaProvider extends ChangeNotifier {
 
     final dataSelecionada = DateFormat('yyyy-MM-dd').format(_dataSelecionada);
 
-    if (agendaMedico['dias'].contains(_dataSelecionada.weekday)) {
+    if (agendaMedico != null && agendaMedico['dias'].contains(_dataSelecionada.weekday)) {
       final horarioInicio = DateTime.parse(
           '$dataSelecionada ${agendaMedico['horarioInicio']}:00');
       final horarioFim =
@@ -59,6 +59,8 @@ class AgendaProvider extends ChangeNotifier {
       }
 
       _horariosDisponiveis = horariosDeAtendimento;
+    } else {
+      _horariosDisponiveis.clear();
     }
   }
 

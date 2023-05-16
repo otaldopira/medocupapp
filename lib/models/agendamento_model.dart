@@ -5,11 +5,13 @@ class Agendamento {
   Colaborador colaborador;
   String data;
   String hora;
+  String? idMedico;
 
   Agendamento({
     this.id,
     required this.colaborador,
     required this.data,
     required this.hora,
+    this.idMedico,
   });
 }

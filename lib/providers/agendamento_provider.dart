@@ -5,11 +5,14 @@ import 'package:medocup_app/models/agendamento_model.dart';
 import 'package:medocup_app/models/colaborador_model.dart';
 import 'package:medocup_app/models/endereco_model.dart';
 
+import '../services/auth_service.dart';
+
 class AgendamentoProvider extends ChangeNotifier {
   final List<Agendamento> _agendamentos = [];
+  late AuthService auth;
   late FirebaseFirestore db;
 
-  AgendamentoProvider() {
+  AgendamentoProvider({required this.auth}) {
     _startRepository();
   }
 
@@ -26,7 +29,9 @@ class AgendamentoProvider extends ChangeNotifier {
 
   List<Agendamento> getAgendamentosDaDataSelecionada(String dataSelecionada) {
     return _agendamentos
-        .where((agendamento) => agendamento.data == dataSelecionada)
+        .where((agendamento) =>
+            agendamento.data == dataSelecionada &&
+            agendamento.idMedico == auth.usuario!.uid)
         .toList();
   }
 
@@ -51,7 +56,8 @@ class AgendamentoProvider extends ChangeNotifier {
         },
       },
       'data': agendamento.data,
-      'hora': agendamento.hora
+      'hora': agendamento.hora,
+      'profissional_id': auth.usuario!.uid
     }).then((value) => adicionarLista(id));
     notifyListeners();
   }
@@ -76,7 +82,9 @@ class AgendamentoProvider extends ChangeNotifier {
                 rua: doc['colaborador']['endereco']['rua']),
           ),
           data: doc['data'],
-          hora: doc['hora']);
+          hora: doc['hora'],
+          idMedico: doc['profissional_id']);
+
       _agendamentos.add(agendamento);
     });
   }
@@ -108,15 +116,20 @@ class AgendamentoProvider extends ChangeNotifier {
         },
       },
       'data': agendamento.data,
-      'hora': agendamento.hora
+      'hora': agendamento.hora,
     });
 
     notifyListeners();
   }
 
   lerAgendamentos() async {
+    debugPrint('to aqui');
+    debugPrint(_agendamentos.toString());
     if (_agendamentos.isEmpty) {
-      final snapshot = await db.collection('agendamentos').get();
+      final docs = db.collection('agendamentos');
+      final snapshot = await docs
+          .where('profissional_id', isEqualTo: auth.usuario!.uid)
+          .get();
       for (var doc in snapshot.docs) {
         var agendamento = Agendamento(
             colaborador: Colaborador(
@@ -135,11 +148,16 @@ class AgendamentoProvider extends ChangeNotifier {
                   rua: doc['colaborador']['endereco']['rua']),
             ),
             data: doc['data'],
-            hora: doc['hora']);
+            hora: doc['hora'],
+            idMedico: doc['profissional_id']);
         _agendamentos.add(agendamento);
       }
       notifyListeners();
     }
+  }
+
+  limparAgendamentos() {
+    _agendamentos.clear();
   }
 
   deletarAgendamento(String id) async {

@@ -20,7 +20,6 @@ class _BuscaPageState extends State<BuscaPage> {
   final buscaColaborador = TextEditingController();
 
   buscarColaborador(String pattern) {
-    debugPrint('to aqui');
     for (Colaborador colaborador
         in context.read<ColaboradorProvider>().colaboradores) {
       if (!colaborador.nome.toLowerCase().contains(pattern.toLowerCase())) {
