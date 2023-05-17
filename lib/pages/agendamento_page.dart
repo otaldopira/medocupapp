@@ -55,6 +55,7 @@ class _AgendamentoPageState extends State<AgendamentoPage>
   }
 
   editarAgendamento() {
+    // ignore: unused_local_variable
     Agendamento novoAgendamento = Agendamento(
       id: widget.agendamento!.id,
       colaborador: _colaboradorSelecionado!,

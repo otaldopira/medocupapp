@@ -15,6 +15,13 @@ class AgendaPage extends StatefulWidget {
 
 class _AgendaPageState extends State<AgendaPage> {
   @override
+  void initState() {
+    super.initState();
+    Future(() => Provider.of<AgendamentoProvider>(context, listen: false)
+        .lerAgendamentos());
+  }
+
+  @override
   Widget build(BuildContext context) {
     final agenda = Provider.of<AgendaProvider>(context);
     final agendamentos = Provider.of<AgendamentoProvider>(context);

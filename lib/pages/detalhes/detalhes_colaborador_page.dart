@@ -7,6 +7,7 @@ import 'package:medocup_app/providers/colaborador_provider.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class DetalhesColaborador extends StatefulWidget {
   Colaborador colaborador;
   DetalhesColaborador({super.key, required this.colaborador});

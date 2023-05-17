@@ -1,14 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 class AuthException implements Exception {
   String mensagem;
   AuthException(this.mensagem);
 }
 
 class AuthService extends ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
   User? usuario;
   bool isLoading = true;
 
@@ -57,7 +56,6 @@ class AuthService extends ChangeNotifier {
       }
     }
   }
-
 
   sair() async {
     await _auth.signOut();

@@ -90,7 +90,6 @@ class _CadastroProfissionalPageState extends State<CadastroProfissionalPage>
 
   @override
   Widget build(BuildContext context) {
-    final profissionais = context.watch<ProfissionalProvider>();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -147,6 +146,7 @@ class _CadastroProfissionalPageState extends State<CadastroProfissionalPage>
                     decoration:
                         const InputDecoration(labelText: 'Data Nascimento'),
                     controller: _dataNascimento,
+                    // ignore: unnecessary_string_escapes
                     inputFormatters: [MaskedInputFormatter('##\/##\/####')],
                     onSaved: (value) {
                       _nome.text = value!;
@@ -181,6 +181,7 @@ class _CadastroProfissionalPageState extends State<CadastroProfissionalPage>
                     decoration: const InputDecoration(labelText: 'CPF'),
                     controller: _cpf,
                     inputFormatters: [
+                      // ignore: unnecessary_string_escapes
                       MaskedInputFormatter('###\.###\.###\-##')
                     ],
                     onSaved: (value) {

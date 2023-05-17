@@ -42,6 +42,7 @@ class _ConfiguracaoAgendaState extends State<ConfiguracaoAgenda> {
         : false;
 
     if (isEditing) {
+      // ignore: use_build_context_synchronously
       final agendaData = await context.read<AgendaProvider>().verificarAgenda();
       if (agendaData != null) {
         setState(() {
@@ -201,6 +202,7 @@ class _ConfiguracaoAgendaState extends State<ConfiguracaoAgenda> {
                   if (value!.isEmpty) {
                     return 'Por favor, selecione pelo menos um dia.';
                   }
+                  return null;
                 },
                 chipDisplay: MultiSelectChipDisplay(
                   onTap: (value) {

@@ -8,6 +8,7 @@ import 'package:medocup_app/models/endereco_model.dart';
 import 'package:medocup_app/providers/colaborador_provider.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class CadastroColaboradorPage extends StatefulWidget {
   Colaborador? colaborador;
   CadastroColaboradorPage({Key? key, this.colaborador}) : super(key: key);
@@ -137,7 +138,6 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
 
   @override
   Widget build(BuildContext context) {
-    final colaboradores = context.read<ColaboradorProvider>();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -194,6 +194,7 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                     decoration:
                         const InputDecoration(labelText: 'Data Nascimento'),
                     controller: _dataNascimento,
+                    // ignore: unnecessary_string_escapes
                     inputFormatters: [MaskedInputFormatter('##\/##\/####')],
                     onSaved: (value) {
                       _nome.text = value!;
@@ -227,6 +228,7 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                   TextFormField(
                     decoration: const InputDecoration(labelText: 'RG'),
                     controller: _rg,
+                    // ignore: unnecessary_string_escapes
                     inputFormatters: [MaskedInputFormatter('##\.###\.###\-#')],
                     onSaved: (value) {
                       _rg.text = value!;
@@ -243,6 +245,7 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                     decoration: const InputDecoration(labelText: 'CPF'),
                     controller: _cpf,
                     inputFormatters: [
+                      // ignore: unnecessary_string_escapes
                       MaskedInputFormatter('###\.###\.###\-##')
                     ],
                     onSaved: (value) {
@@ -283,6 +286,7 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                   TextFormField(
                     decoration: const InputDecoration(labelText: 'CEP'),
                     controller: _cep,
+                    // ignore: unnecessary_string_escapes
                     inputFormatters: [MaskedInputFormatter('#####\-###')],
                     onSaved: (value) {
                       _cep.text = value!;

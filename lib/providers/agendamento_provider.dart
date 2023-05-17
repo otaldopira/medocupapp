@@ -8,7 +8,7 @@ import 'package:medocup_app/models/endereco_model.dart';
 import '../services/auth_service.dart';
 
 class AgendamentoProvider extends ChangeNotifier {
-  final List<Agendamento> _agendamentos = [];
+  List<Agendamento> _agendamentos = [];
   late AuthService auth;
   late FirebaseFirestore db;
 
@@ -123,8 +123,7 @@ class AgendamentoProvider extends ChangeNotifier {
   }
 
   lerAgendamentos() async {
-    debugPrint('to aqui');
-    debugPrint(_agendamentos.toString());
+    _agendamentos = [];
     if (_agendamentos.isEmpty) {
       final docs = db.collection('agendamentos');
       final snapshot = await docs

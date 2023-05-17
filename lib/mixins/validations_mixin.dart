@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 mixin ValidacoesMixin {
   String? campoVazio(String? valor, [String? mensagem]) {
     if (valor == null || valor.isEmpty) {
