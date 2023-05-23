@@ -50,7 +50,7 @@ class ColaboradorProvider extends ChangeNotifier {
   adicionarLista(String id) {
     db.collection('colaboradores/').doc(id).get().then((doc) {
       var colaborador = Colaborador(
-        id: doc.id,
+        idColaborador: doc.id,
         nome: doc['nome'],
         sexo: doc['sexo'],
         cpf: doc['cpf'],
@@ -74,7 +74,7 @@ class ColaboradorProvider extends ChangeNotifier {
       final snapshot = await db.collection('colaboradores/').get();
       for (var doc in snapshot.docs) {
         var colaborador = Colaborador(
-          id: doc.id,
+          idColaborador: doc.id,
           nome: doc['nome'],
           sexo: doc['sexo'],
           cpf: doc['cpf'],
@@ -95,8 +95,29 @@ class ColaboradorProvider extends ChangeNotifier {
     }
   }
 
+  atualizarAgendamentos(
+      Colaborador colaborador, Map<String, Object> data) async {
+    final docs = db.collection('agendamentos');
+    final snapshot = await docs
+        .where("colaborador.idColaborador",
+            isEqualTo: colaborador.idColaborador)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      return null;
+    }
+
+    for (var doc in snapshot.docs) {
+      await db
+          .collection('agendamentos')
+          .doc(doc.id)
+          .update({'colaborador': data});
+    }
+  }
+
   editarColaborador(Colaborador colaborador) async {
-    var indice = colaboradores.indexWhere((a) => a.id == colaborador.id);
+    var indice = _colaboradores
+        .indexWhere((a) => a.idColaborador == colaborador.idColaborador);
 
     if (indice == -1) {
       return null;
@@ -104,7 +125,8 @@ class ColaboradorProvider extends ChangeNotifier {
 
     _colaboradores[indice] = colaborador;
 
-    await db.collection('colaboradores/').doc().update({
+    Map<String, Object> data = {
+      'idColaborador': colaborador.idColaborador!,
       'nome': colaborador.nome,
       'sexo': colaborador.sexo,
       'cpf': colaborador.cpf,
@@ -118,14 +140,21 @@ class ColaboradorProvider extends ChangeNotifier {
         'bairro': colaborador.endereco.bairro,
         'rua': colaborador.endereco.rua,
       },
-    });
+    };
+
+    await db
+        .collection('colaboradores')
+        .doc(colaborador.idColaborador)
+        .update(data);
+    await atualizarAgendamentos(colaborador, data);
 
     notifyListeners();
   }
 
   deletarColaborador(String id) async {
     await db.collection('colaboradores/').doc(id).delete();
-    _colaboradores.removeAt(colaboradores.indexWhere((a) => a.id == id));
+    _colaboradores
+        .removeAt(colaboradores.indexWhere((a) => a.idColaborador == id));
     notifyListeners();
   }
 }

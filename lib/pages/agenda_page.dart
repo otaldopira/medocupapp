@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:intl/intl.dart';
 import 'package:medocup_app/providers/agenda_provider.dart';
 import 'package:medocup_app/providers/agendamento_provider.dart';
@@ -17,15 +18,20 @@ class _AgendaPageState extends State<AgendaPage> {
   @override
   void initState() {
     super.initState();
-    Future(() => Provider.of<AgendamentoProvider>(context, listen: false)
-        .lerAgendamentos());
+
+    Future(() {
+      Loader.show(context,
+          progressIndicator: const CircularProgressIndicator());
+      Provider.of<AgendamentoProvider>(context, listen: false)
+          .lerAgendamentos()
+          .then((_) => Loader.hide());
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final agenda = Provider.of<AgendaProvider>(context);
     final agendamentos = Provider.of<AgendamentoProvider>(context);
-
     return Scaffold(
       body: SafeArea(
         child: Column(

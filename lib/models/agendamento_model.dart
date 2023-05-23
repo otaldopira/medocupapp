@@ -1,14 +1,14 @@
 import 'colaborador_model.dart';
 
 class Agendamento {
-  String? id;
+  String? idAgendamento;
   Colaborador colaborador;
   String data;
   String hora;
   String? idMedico;
 
   Agendamento({
-    this.id,
+    this.idAgendamento,
     required this.colaborador,
     required this.data,
     required this.hora,

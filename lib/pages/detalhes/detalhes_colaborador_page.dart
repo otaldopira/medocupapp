@@ -1,11 +1,17 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:intl/intl.dart';
 import 'package:medocup_app/models/colaborador_model.dart';
 import 'package:medocup_app/pages/cadastros/cadastro_colaborador_page.dart';
+import 'package:medocup_app/providers/agendamento_provider.dart';
 import 'package:medocup_app/providers/colaborador_provider.dart';
+import 'package:medocup_app/widgets/agendamentos_colaborador.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import '../../widgets/dados_colaborador.dart';
 
 // ignore: must_be_immutable
 class DetalhesColaborador extends StatefulWidget {
@@ -18,8 +24,17 @@ class DetalhesColaborador extends StatefulWidget {
 
 class _DetalhesColaboradorState extends State<DetalhesColaborador> {
   @override
+  void initState() {
+    super.initState();
+    context
+        .read<AgendamentoProvider>()
+        .buscarAgendamentosColaborador(widget.colaborador);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colaboradores = Provider.of<ColaboradorProvider>(context);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -43,7 +58,14 @@ class _DetalhesColaboradorState extends State<DetalhesColaborador> {
                       ],
                     ),
                     onTap: () {
-                      Navigator.pop(context);
+                      Loader.show(context,
+                          progressIndicator: const CircularProgressIndicator());
+                      Provider.of<AgendamentoProvider>(context, listen: false)
+                          .lerAgendamentos()
+                          .then((_) {
+                        Navigator.pop(context, widget.colaborador);
+                        Loader.hide();
+                      });
                     },
                   ),
                   InkWell(
@@ -74,28 +96,34 @@ class _DetalhesColaboradorState extends State<DetalhesColaborador> {
                             ),
                             CupertinoActionSheetAction(
                               onPressed: () => {
-                                showDialog(
+                                AwesomeDialog(
                                   context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text(
-                                        'Você deseja remover este Colaborador ?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          colaboradores.deletarColaborador(
-                                              widget.colaborador.id.toString());
-                                        },
-                                        child: const Text('Sim'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Não'),
-                                      ),
-                                    ],
-                                  ),
-                                )
+                                  dialogType: DialogType.warning,
+                                  animType: AnimType.topSlide,
+                                  headerAnimationLoop: true,
+                                  title:
+                                      'Você deseja excluir este colaborador?',
+                                  btnCancelText: 'Cancelar',
+                                  btnOkText: 'Confirmar',
+                                  btnCancelOnPress: () {},
+                                  btnOkOnPress: () {
+                                    colaboradores.deletarColaborador(widget
+                                        .colaborador.idColaborador
+                                        .toString());
+                                    AwesomeDialog(
+                                      context: context,
+                                      animType: AnimType.bottomSlide,
+                                      autoHide:
+                                          const Duration(milliseconds: 1500),
+                                      headerAnimationLoop: false,
+                                      dialogType: DialogType.success,
+                                      title: 'Colaborador excluído',
+                                    ).show().then((__) {
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                ).show()
                               },
                               isDestructiveAction: true,
                               child: const Text('Excluir'),
@@ -113,127 +141,57 @@ class _DetalhesColaboradorState extends State<DetalhesColaborador> {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.people_outline_outlined,
-                    size: 80,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.colaborador.nome,
-                        style: const TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.only(top: 24, bottom: 24),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: ProfilePicture(
+                        name: widget.colaborador.nome,
+                        radius: 31,
+                        fontsize: 21,
                       ),
-                      Text(
-                          'Idade: ${DateTime.now().difference(DateTime.parse(DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(widget.colaborador.dataNascimento)))).inDays ~/ 365} anos'),
-                    ],
-                  )
-                ],
-              ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 15),
-                child: Text(
-                  'Dados Pessoais',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Container(
-                width: 500,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(10),
                     ),
-                    color: Colors.grey[350]),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Nome Completo',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.colaborador.nome,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        'Gênero',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.colaborador.sexo,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        'CPF',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.colaborador.cpf,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        'RG',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.colaborador.rg,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        'Data Nascimento',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.colaborador.dataNascimento,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        'Celular',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.colaborador.celular,
-                      ),
-                    ],
-                  ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.colaborador.nome,
+                          style: const TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                            'Idade: ${DateTime.now().difference(DateTime.parse(DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(widget.colaborador.dataNascimento)))).inDays ~/ 365} anos'),
+                      ],
+                    )
+                  ],
                 ),
-              )
+              ),
+              DefaultTabController(
+                length: 2,
+                child: Column(
+                  children: [
+                    const TabBar(
+                      labelColor: Colors.black,
+                      tabs: [
+                        Tab(text: 'Dados Pessoais'),
+                        Tab(text: 'Agendamentos'),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 600,
+                      child: TabBarView(
+                        children: [
+                          DadosColaborador(colaborador: widget.colaborador),
+                          AgendamentosColaborador(
+                              colaborador: widget.colaborador),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

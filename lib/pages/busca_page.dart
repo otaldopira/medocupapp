@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:medocup_app/models/colaborador_model.dart';
 import 'package:medocup_app/pages/detalhes/detalhes_colaborador_page.dart';
 import 'package:medocup_app/providers/colaborador_provider.dart';
@@ -20,15 +21,16 @@ class _BuscaPageState extends State<BuscaPage> {
   final buscaColaborador = TextEditingController();
 
   buscarColaborador(String pattern) {
-    for (Colaborador colaborador
-        in context.read<ColaboradorProvider>().colaboradores) {
-      if (!colaborador.nome.toLowerCase().contains(pattern.toLowerCase())) {
-        _colaboradoresFiltro.remove(colaborador);
-      }
+    final colaboradorProvider = context.read<ColaboradorProvider>();
 
-      if (colaborador.nome.toLowerCase().contains(pattern.toLowerCase()) &&
-          pattern != '' &&
-          !_colaboradoresFiltro.contains(colaborador)) {
+    _colaboradoresFiltro
+        .clear(); // Limpa a lista antes de adicionar os resultados filtrados
+
+    for (Colaborador colaborador in colaboradorProvider.colaboradores) {
+      final nomeColaborador = colaborador.nome.toLowerCase();
+      final patternLowerCase = pattern.toLowerCase();
+
+      if (nomeColaborador.contains(patternLowerCase)) {
         _colaboradoresFiltro.add(colaborador);
       }
     }
@@ -103,7 +105,14 @@ class _BuscaPageState extends State<BuscaPage> {
                         itemBuilder: (context, index) {
                           final colaborador = _colaboradoresFiltro[index];
                           return ListTile(
-                            title: Text(colaborador.nome),
+                            leading: ProfilePicture(
+                              name: colaborador.nome,
+                              radius: 31,
+                              fontsize: 21,
+                            ),
+                            title: Text(colaborador.nome,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
                             subtitle: Text(colaborador.dataNascimento),
                             onTap: () {
                               if (widget.tipoSelecao ==
@@ -115,6 +124,8 @@ class _BuscaPageState extends State<BuscaPage> {
                                   _colaboradoresFiltro.clear();
                                 });
                                 showBarModalBottomSheet(
+                                  enableDrag: false,
+                                  isDismissible: false,
                                   expand: true,
                                   context: context,
                                   builder: (context) => DetalhesColaborador(

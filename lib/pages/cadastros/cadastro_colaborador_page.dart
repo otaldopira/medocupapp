@@ -1,6 +1,8 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:intl/intl.dart';
 import 'package:medocup_app/mixins/validations_mixin.dart';
 import 'package:medocup_app/models/colaborador_model.dart';
@@ -74,46 +76,75 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
   final _rua = TextEditingController();
 
   cadastrarColaborador() {
-    Colaborador colaborador = Colaborador(
-      id: '',
-      nome: _nome.text,
-      sexo: _generoSelecionado.toString(),
-      cpf: _cpf.text,
-      rg: _rg.text,
-      dataNascimento: _dataNascimento.text,
-      celular: _celular.text,
-      endereco: Endereco(
-          cep: _cep.text,
-          estado: _estadoSelecionado.toString(),
-          cidade: _cidade.text,
-          bairro: _bairro.text,
-          rua: _rua.text),
-    );
     if (formKey.currentState!.validate()) {
-      context.read<ColaboradorProvider>().inserirColaborador(colaborador);
-      Navigator.pop(context);
+      Loader.show(context,
+          progressIndicator: const CircularProgressIndicator());
+      Colaborador colaborador = Colaborador(
+        idColaborador: '',
+        nome: _nome.text,
+        sexo: _generoSelecionado.toString(),
+        cpf: _cpf.text,
+        rg: _rg.text,
+        dataNascimento: _dataNascimento.text,
+        celular: _celular.text,
+        endereco: Endereco(
+            cep: _cep.text,
+            estado: _estadoSelecionado.toString(),
+            cidade: _cidade.text,
+            bairro: _bairro.text,
+            rua: _rua.text),
+      );
+      context
+          .read<ColaboradorProvider>()
+          .inserirColaborador(colaborador)
+          .then((_) {
+        Loader.hide();
+        AwesomeDialog(
+          context: context,
+          animType: AnimType.bottomSlide,
+          autoHide: const Duration(milliseconds: 1500),
+          headerAnimationLoop: false,
+          dialogType: DialogType.success,
+          title: 'Colaborador cadastrado',
+        ).show().then((__) => Navigator.pop(context));
+      });
     }
     return null;
   }
 
   editarColaborador() {
-    Colaborador colaborador = Colaborador(
-      nome: _nome.text,
-      sexo: _generoSelecionado.toString(),
-      cpf: _cpf.text,
-      rg: _rg.text,
-      dataNascimento: _dataNascimento.text,
-      celular: _celular.text,
-      endereco: Endereco(
-          cep: _cep.text,
-          estado: _estadoSelecionado.toString(),
-          cidade: _cidade.text,
-          bairro: _bairro.text,
-          rua: _rua.text),
-    );
     if (formKey.currentState!.validate()) {
-      context.watch<ColaboradorProvider>().editarColaborador(colaborador);
-      Navigator.pop(context, colaborador);
+      Loader.show(context,
+          progressIndicator: const CircularProgressIndicator());
+      Colaborador colaborador = Colaborador(
+        idColaborador: widget.colaborador?.idColaborador,
+        nome: _nome.text,
+        sexo: _generoSelecionado.toString(),
+        cpf: _cpf.text,
+        rg: _rg.text,
+        dataNascimento: _dataNascimento.text,
+        celular: _celular.text,
+        endereco: Endereco(
+            cep: _cep.text,
+            estado: _estadoSelecionado.toString(),
+            cidade: _cidade.text,
+            bairro: _bairro.text,
+            rua: _rua.text),
+      );
+      context
+          .read<ColaboradorProvider>()
+          .editarColaborador(colaborador)
+          .then((_) {
+        Loader.hide();
+        AwesomeDialog(
+          context: context,
+          animType: AnimType.bottomSlide,
+          autoHide: const Duration(milliseconds: 1500),
+          headerAnimationLoop: false,
+          dialogType: DialogType.success,
+          title: 'Colaborador alterado',
+        ).show().then((__) => Navigator.pop(context, colaborador));
+      });
     }
     return null;
   }

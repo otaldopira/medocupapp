@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:medocup_app/databases/db_firestore.dart';
 import 'package:medocup_app/models/agendamento_model.dart';
 import 'package:medocup_app/models/colaborador_model.dart';
 import 'package:medocup_app/models/endereco_model.dart';
-
 import '../services/auth_service.dart';
 
 class AgendamentoProvider extends ChangeNotifier {
-  List<Agendamento> _agendamentos = [];
+  final List<Agendamento> _agendamentos = [];
+  List<Agendamento> _agendamentosColaborador = [];
   late AuthService auth;
   late FirebaseFirestore db;
 
@@ -18,7 +19,6 @@ class AgendamentoProvider extends ChangeNotifier {
 
   _startRepository() async {
     await _startFirestore();
-    lerAgendamentos();
   }
 
   _startFirestore() {
@@ -26,6 +26,7 @@ class AgendamentoProvider extends ChangeNotifier {
   }
 
   List<Agendamento> get agendamentos => _agendamentos;
+  List<Agendamento> get agendamentosColaborador => _agendamentosColaborador;
 
   List<Agendamento> getAgendamentosDaDataSelecionada(String dataSelecionada) {
     return _agendamentos
@@ -38,9 +39,9 @@ class AgendamentoProvider extends ChangeNotifier {
   inserirAgendamento(Agendamento agendamento) async {
     String id = db.collection('agendamentos/').doc().id;
     await db.collection('agendamentos/').doc(id).set({
-      'id': id,
+      'idAgendamento': id,
       'colaborador': {
-        'id': agendamento.colaborador.id,
+        'idColaborador': agendamento.colaborador.idColaborador,
         'nome': agendamento.colaborador.nome,
         'sexo': agendamento.colaborador.sexo,
         'cpf': agendamento.colaborador.cpf,
@@ -65,9 +66,9 @@ class AgendamentoProvider extends ChangeNotifier {
   adicionarLista(String id) async {
     await db.collection('agendamentos/').doc(id).get().then((doc) {
       var agendamento = Agendamento(
-          id: id,
+          idAgendamento: id,
           colaborador: Colaborador(
-            id: doc['colaborador']['id'],
+            idColaborador: doc['colaborador']['idColaborador'],
             nome: doc['colaborador']['nome'],
             sexo: doc['colaborador']['sexo'],
             cpf: doc['colaborador']['cpf'],
@@ -90,17 +91,19 @@ class AgendamentoProvider extends ChangeNotifier {
   }
 
   editarAgendamento(Agendamento agendamento) async {
-    var indice = _agendamentos.indexWhere((a) => a.id == agendamento.id);
+    var indice = _agendamentos
+        .indexWhere((a) => a.idAgendamento == agendamento.idAgendamento);
 
     if (indice == -1) {
       return null;
     }
 
-    _agendamentos[indice] = agendamento;
-
-    await db.collection('agendamentos/').doc(agendamento.id.toString()).update({
+    await db
+        .collection('agendamentos/')
+        .doc(agendamento.idAgendamento.toString())
+        .update({
       'colaborador': {
-        'id': agendamento.colaborador.id,
+        'idColaborador': agendamento.colaborador.idColaborador,
         'nome': agendamento.colaborador.nome,
         'sexo': agendamento.colaborador.sexo,
         'cpf': agendamento.colaborador.cpf,
@@ -117,13 +120,14 @@ class AgendamentoProvider extends ChangeNotifier {
       },
       'data': agendamento.data,
       'hora': agendamento.hora,
+    }).then((value) {
+      _agendamentos[indice] = agendamento;
+      notifyListeners();
     });
-
-    notifyListeners();
   }
 
   lerAgendamentos() async {
-    _agendamentos = [];
+    _agendamentos.clear();
     if (_agendamentos.isEmpty) {
       final docs = db.collection('agendamentos');
       final snapshot = await docs
@@ -131,8 +135,9 @@ class AgendamentoProvider extends ChangeNotifier {
           .get();
       for (var doc in snapshot.docs) {
         var agendamento = Agendamento(
+            idAgendamento: doc['idAgendamento'],
             colaborador: Colaborador(
-              id: doc['colaborador']['id'],
+              idColaborador: doc['colaborador']['idColaborador'],
               nome: doc['colaborador']['nome'],
               sexo: doc['colaborador']['sexo'],
               cpf: doc['colaborador']['cpf'],
@@ -157,11 +162,55 @@ class AgendamentoProvider extends ChangeNotifier {
 
   limparAgendamentos() {
     _agendamentos.clear();
+    notifyListeners();
   }
 
   deletarAgendamento(String id) async {
-    await db.collection('agendamentos').doc(id.toString()).delete();
-    _agendamentos.removeAt(agendamentos.indexWhere((a) => a.id == id));
+    await db.collection('agendamentos').doc(id).delete();
+    _agendamentos.removeWhere((agendamento) => agendamento.idAgendamento == id);
+    notifyListeners();
+  }
+
+  buscarAgendamentosColaborador(Colaborador colaborador) async {
+    _agendamentosColaborador = [];
+
+    final docs = db.collection('agendamentos');
+    final snapshot = await docs
+        .where('colaborador.idColaborador',
+            isEqualTo: colaborador.idColaborador)
+        .get();
+
+    for (var doc in snapshot.docs) {
+      var agendamento = Agendamento(
+        idAgendamento: doc['idAgendamento'],
+        colaborador: Colaborador(
+          idColaborador: doc['colaborador']['idColaborador'],
+          nome: doc['colaborador']['nome'],
+          sexo: doc['colaborador']['sexo'],
+          cpf: doc['colaborador']['cpf'],
+          rg: doc['colaborador']['rg'],
+          dataNascimento: doc['colaborador']['dataNascimento'],
+          celular: doc['colaborador']['celular'],
+          endereco: Endereco(
+            cep: doc['colaborador']['endereco']['cep'],
+            estado: doc['colaborador']['endereco']['estado'],
+            cidade: doc['colaborador']['endereco']['cidade'],
+            bairro: doc['colaborador']['endereco']['bairro'],
+            rua: doc['colaborador']['endereco']['rua'],
+          ),
+        ),
+        data: doc['data'], // Armazenar como string no formato "dd/MM/yyyy"
+        hora: doc['hora'],
+        idMedico: doc['profissional_id'],
+      );
+
+      _agendamentosColaborador.add(agendamento);
+    }
+
+    _agendamentosColaborador.sort((a, b) => DateFormat('dd/MM/yyyy')
+        .parse(b.data)
+        .compareTo(DateFormat('dd/MM/yyyy').parse(a.data))); // Ordenar por data
+
     notifyListeners();
   }
 }

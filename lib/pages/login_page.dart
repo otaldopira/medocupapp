@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medocup_app/pages/cadastros/cadastro_profissional.dart';
 import 'package:medocup_app/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -126,19 +127,34 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10))),
                         child: TextButton(
-                            onPressed: () {
-                              entrar();
-                            },
-                            child: isLoading
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                : const Text(
-                                    'Entrar',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18),
-                                  )),
-                      )
+                          onPressed: () {
+                            entrar();
+                          },
+                          child: isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text(
+                                  'Entrar',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        const CadastroProfissionalPage()));
+                          },
+                          child: const Text(
+                              'Ainda não tem conta? Cadastre-se agora.'),
+                        ),
+                      ),
                     ],
                   ),
                 ),

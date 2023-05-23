@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:medocup_app/pages/cadastros/cadastro_colaborador_page.dart';
-import 'package:medocup_app/pages/cadastros/cadastro_profissional.dart';
 
 class CadastroPage extends StatelessWidget {
   const CadastroPage({Key? key}) : super(key: key);
@@ -8,7 +7,7 @@ class CadastroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text("Cadastro")),
       body: SafeArea(
         child: ListView(
           children: ListTile.divideTiles(
@@ -23,15 +22,15 @@ class CadastroPage extends StatelessWidget {
                           builder: (_) => CadastroColaboradorPage()));
                 },
               ),
-              ListTile(
-                title: const Text('Profissionais'),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const CadastroProfissionalPage()));
-                },
-              ),
+              const Divider(),
+              // ListTile(
+              //   title: const Text('Empresas'),
+              //   onTap: () {},
+              // ),
+              // ListTile(
+              //   title: const Text('Exames'),
+              //   onTap: () {},
+              // ),
             ],
           ).toList(),
         ),

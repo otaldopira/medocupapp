@@ -6,10 +6,12 @@ import 'package:medocup_app/services/auth_service.dart';
 
 class ProfissionalProvider extends ChangeNotifier {
   final List<Profissional> _profissionais = [];
+  late Profissional _profissional;
   late AuthService auth;
   late FirebaseFirestore db;
 
   List<Profissional> get profissionais => _profissionais;
+  Profissional get profissional => _profissional;
 
   ProfissionalProvider({required this.auth}) {
     _startRepository();
@@ -85,7 +87,14 @@ class ProfissionalProvider extends ChangeNotifier {
     }
   }
 
-  editarProfissional(Profissional profissional) async {
+  editarProfissional(
+      Profissional profissional, String email, String senha) async {
+    try {
+      await auth.alterar(email, senha);
+    } on AuthException catch (e) {
+      return e.mensagem;
+    }
+
     var indice = profissionais.indexWhere((a) => a.id == profissional.id);
 
     if (indice == -1) {
@@ -94,7 +103,7 @@ class ProfissionalProvider extends ChangeNotifier {
 
     _profissionais[indice] = profissional;
 
-    await db.collection('profissionais/').doc().update({
+    await db.collection('profissionais/').doc(profissional.id).update({
       'id': profissional.id,
       'nome': profissional.nome,
       'dataNascimento': profissional.dataNascimento,
@@ -109,5 +118,24 @@ class ProfissionalProvider extends ChangeNotifier {
   deletarProfissional(Profissional profissional) async {
     _profissionais.remove(profissional);
     notifyListeners();
+  }
+
+  buscarProfissional() async {
+    await db
+        .collection('profissionais/')
+        .doc(auth.usuario!.uid)
+        .get()
+        .then((doc) {
+      var profissional = Profissional(
+        id: doc.id,
+        nome: doc['nome'],
+        dataNascimento: doc['dataNascimento'],
+        sexo: doc['sexo'],
+        cpf: doc['cpf'],
+        crm: doc['crm'],
+      );
+      _profissional = profissional;
+      notifyListeners();
+    });
   }
 }

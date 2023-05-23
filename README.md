@@ -17,38 +17,36 @@ git clone https://github.com/otaldopira/medocupapp.git
 
 2. Instale o Flutter em sua máquina seguindo o passo a passo da documentação oficial: https://flutter.dev/docs/get-started/install
 
-3. Configure as variáveis de ambiente do Flutter:
+3. Instale o Firebase e configure em sua máquina seguindo o passo a passo da documentação oficial: https://firebase.google.com/docs/flutter/setup?hl=pt-br&platform=android
+
+4. Configure as variáveis de ambiente do Flutter:
 
 - No Windows:
   1. Abra o Painel de Controle e acesse as Variáveis de Ambiente.
   2. Adicione a variável de ambiente `PATH` com o caminho para a pasta `bin` do Flutter em seu computador.
 
-4. Abra o terminal e navegue até o diretório do projeto:
+5. Abra o terminal e navegue até o diretório do projeto:
 
 ```
 cd medocupapp
 ``` 
 
-5. Baixe as dependências do projeto:
+6. Baixe as dependências do projeto:
 
 ```
 flutter pub get
 ```
 
-6. Execute o projeto no emulador ou dispositivo físico
+7. Execute o projeto no emulador ou dispositivo físico
 
 
 Pronto, agora você tem o Medocupapp instalado e funcionando em seu emulador ou dispositivo físico!
 
-## Credenciais 
-```
-email: 'joao@email.com', senha: '123'
-email: 'maria@email.com', senha: '456'
-``` 
-
 ## Funcionalidade Faltantes
-- Ainda não foi implementado o cadastro de médicos e agendas separadas.</p>
-- Bug da biblioteca de calendário, quando você seleciona um dia específico pelo datepicker do flutter, ele não seleciona automaticamente no calendário da biblioteca.</p>
+- Não foi implementado o cadastro de exames</p>
+- Não foi implementado o cadastro de empresas</p>
+- Não foi implementado a parte de atendimento</p>
+- Não foi implementado os tipos de usuário, ex: Admin, Secretária, apenas o usuário Médico</p>
 
 # Grupo:
 <p>Eric Gustavo Denkievicz</p>

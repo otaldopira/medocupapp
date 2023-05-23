@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:intl/intl.dart';
 import 'package:medocup_app/mixins/validations_mixin.dart';
 import 'package:medocup_app/models/agendamento_model.dart';
@@ -43,40 +44,73 @@ class _AgendamentoPageState extends State<AgendamentoPage>
   }
 
   inserirAgendamento() {
+    Loader.show(context, progressIndicator: const CircularProgressIndicator());
     Agendamento novoAgendamento = Agendamento(
       colaborador: _colaboradorSelecionado!,
       data: _controllerData.text,
       hora: _controllerHora.text,
     );
 
-    context.read<AgendamentoProvider>().inserirAgendamento(novoAgendamento);
-
-    Navigator.pop(context, MaterialPageRoute(builder: (_) => const HomePage()));
+    context
+        .read<AgendamentoProvider>()
+        .inserirAgendamento(novoAgendamento)
+        .then((_) {
+      Loader.hide();
+      AwesomeDialog(
+        context: context,
+        animType: AnimType.bottomSlide,
+        autoHide: const Duration(milliseconds: 1500),
+        headerAnimationLoop: false,
+        dialogType: DialogType.success,
+        title: 'Agendamento inserido',
+      ).show().then((__) => Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => const HomePage())));
+    });
   }
 
   editarAgendamento() {
-    // ignore: unused_local_variable
+    Loader.show(context, progressIndicator: const CircularProgressIndicator());
     Agendamento novoAgendamento = Agendamento(
-      id: widget.agendamento!.id,
+      idAgendamento: widget.agendamento!.idAgendamento,
       colaborador: _colaboradorSelecionado!,
       data: _controllerData.text,
       hora: _controllerHora.text,
     );
 
-    //context.watch<AgendamentoProvider>().editarAgendamento(novoAgendamento);
-
-    Navigator.pop(context);
+    context
+        .read<AgendamentoProvider>()
+        .editarAgendamento(novoAgendamento)
+        .then((_) {
+      Loader.hide();
+      AwesomeDialog(
+        context: context,
+        animType: AnimType.bottomSlide,
+        autoHide: const Duration(milliseconds: 1500),
+        headerAnimationLoop: false,
+        dialogType: DialogType.success,
+        title: 'Agendamento editado',
+      ).show().then((__) => Navigator.pop(context));
+    });
   }
 
   @override
   void initState() {
     super.initState();
     if (isEditing()) {
-      _colaboradorSelecionado = widget.agendamento!.colaborador;
-      _controllerColaborador.text = widget.agendamento!.colaborador.nome;
-      _controllerCelular.text = widget.agendamento!.colaborador.celular;
-      _controllerData.text = widget.agendamento!.data;
-      _controllerHora.text = widget.agendamento!.hora;
+      String dataString = widget.agendamento!.data;
+      DateFormat formato = DateFormat("dd/MM/yyyy");
+      DateTime dataAtual = formato.parse(dataString);
+
+      Future(() {
+        Loader.show(context,
+            progressIndicator: const CircularProgressIndicator());
+        context.read<AgendaProvider>().setDataSelecionada(dataAtual);
+        _colaboradorSelecionado = widget.agendamento!.colaborador;
+        _controllerColaborador.text = widget.agendamento!.colaborador.nome;
+        _controllerCelular.text = widget.agendamento!.colaborador.celular;
+        _controllerData.text = widget.agendamento!.data;
+        _controllerHora.text = widget.agendamento!.hora;
+      }).then((_) => Loader.hide());
     }
   }
 
@@ -135,7 +169,7 @@ class _AgendamentoPageState extends State<AgendamentoPage>
                           DateTime? escolherData = await showDatePicker(
                             context: context,
                             initialDate: agenda.dataSelecionada,
-                            firstDate: DateTime(2022),
+                            firstDate: agenda.dataSelecionada,
                             lastDate: DateTime(2024),
                           );
 
@@ -178,36 +212,48 @@ class _AgendamentoPageState extends State<AgendamentoPage>
                                     .toList());
                           });
                           showModalBottomSheet(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20))),
                             context: context,
-                            builder: (context) => SizedBox(
-                              height: 250,
-                              child: Column(
-                                children: [
-                                  TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Selecionar')),
-                                  Expanded(
-                                    child: CupertinoPicker(
-                                      onSelectedItemChanged: (value) =>
-                                          setState(() {
-                                        _controllerHora.text =
-                                            agenda.horario(value);
-                                      }),
-                                      itemExtent: 32,
-                                      // This is called when selected item is changed.
-                                      children: List<Widget>.generate(
-                                        horariosDisponiveis!.length,
-                                        (index) {
-                                          return Text(
-                                            horariosDisponiveis![index],
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            builder: (BuildContext context) {
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 20.0),
+                                child: SizedBox(
+                                  height: 200,
+                                  child: horariosDisponiveis!.isNotEmpty
+                                      ? ListView.separated(
+                                          separatorBuilder: (context, index) =>
+                                              const Divider(),
+                                          itemBuilder: (context, index) {
+                                            return ListTile(
+                                              title: Text(
+                                                  horariosDisponiveis![index]),
+                                              onTap: () {
+                                                setState(() {
+                                                  _controllerHora.text =
+                                                      agenda.horario(index);
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                            );
+                                          },
+                                          itemCount:
+                                              horariosDisponiveis!.length,
+                                        )
+                                      : const Center(
+                                          child: ListTile(
+                                            title: Text(
+                                                'Sem horários disponíveis',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                          ),
+                                        ),
+                                ),
+                              );
+                            },
                           );
                         },
                         keyboardType: TextInputType.none,

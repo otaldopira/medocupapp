@@ -7,7 +7,7 @@ class AuthException implements Exception {
 }
 
 class AuthService extends ChangeNotifier {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   User? usuario;
   bool isLoading = true;
 
@@ -15,9 +15,9 @@ class AuthService extends ChangeNotifier {
     _authCheck();
   }
 
-  _authCheck() {
-    _auth.authStateChanges().listen((User? usuario) {
-      usuario = (usuario == null) ? null : usuario;
+  _authCheck() async {
+    _auth.authStateChanges().listen((User? user) {
+      usuario = (user == null) ? null : user;
       isLoading = false;
       notifyListeners();
     });
@@ -42,6 +42,17 @@ class AuthService extends ChangeNotifier {
       }
     }
     return null;
+  }
+
+
+  alterar(String email, String senha)async{
+    try {
+      await _auth.currentUser!.updateEmail(email);
+      await _auth.currentUser!.updatePassword(senha);
+    } catch (e) {
+       throw AuthException('Não foi possível alterar as credenciais');
+    }
+    
   }
 
   entrar(String email, String senha) async {

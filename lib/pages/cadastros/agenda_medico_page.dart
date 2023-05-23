@@ -1,5 +1,8 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/masked_input_formatter.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
+import 'package:medocup_app/pages/home_page.dart';
 import 'package:medocup_app/providers/agenda_provider.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
@@ -31,12 +34,15 @@ class _ConfiguracaoAgendaState extends State<ConfiguracaoAgenda> {
 
   @override
   void initState() {
-    super.initState(); // Define o valor padrão para isEditing
-
-    _loadAgendaData(); // Chama o método para carregar os dados da agenda assincronamente
+    super.initState();
+    Future(() {
+      Loader.show(context,
+          progressIndicator: const CircularProgressIndicator());
+      loadAgendaData().then((_) => Loader.hide());
+    });
   }
 
-  void _loadAgendaData() async {
+  loadAgendaData() async {
     isEditing = await context.read<AgendaProvider>().verificarAgenda() != null
         ? true
         : false;
@@ -57,23 +63,51 @@ class _ConfiguracaoAgendaState extends State<ConfiguracaoAgenda> {
 
   void _salvarConfiguracao() {
     if (_formKey.currentState!.validate()) {
-      context.read<AgendaProvider>().atualizarAgenda(
-          diasSelecionados,
-          _horarioInicio.text,
-          _horarioFim.text,
-          int.parse(_intervaloMinutos.text));
       if (isEditing) {
+        Loader.show(context,
+            progressIndicator: const CircularProgressIndicator());
+        context
+            .read<AgendaProvider>()
+            .atualizarAgenda(diasSelecionados, _horarioInicio.text,
+                _horarioFim.text, int.parse(_intervaloMinutos.text))
+            .then((_) {
+          Loader.hide();
+          AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            autoHide: const Duration(milliseconds: 1500),
+            headerAnimationLoop: false,
+            dialogType: DialogType.success,
+            title: 'Agenda adicionada',
+          ).show().then((__) => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              )));
+        });
       } else {
-        context.read<AgendaProvider>().adicionarAgenda(
-            diasSelecionados,
-            _horarioInicio.text,
-            _horarioFim.text,
-            int.parse(_intervaloMinutos.text));
+        Loader.show(context,
+            progressIndicator: const CircularProgressIndicator());
+        context
+            .read<AgendaProvider>()
+            .adicionarAgenda(diasSelecionados, _horarioInicio.text,
+                _horarioFim.text, int.parse(_intervaloMinutos.text))
+            .then((_) {
+          Loader.hide();
+          AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            autoHide: const Duration(milliseconds: 1500),
+            headerAnimationLoop: false,
+            dialogType: DialogType.success,
+            title: 'Agenda atualizada',
+          ).show().then((__) => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              )));
+        });
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Configuração de agenda salva com sucesso!')),
-      );
     }
   }
 
@@ -88,18 +122,7 @@ class _ConfiguracaoAgendaState extends State<ConfiguracaoAgenda> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Configurar Agenda'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                _salvarConfiguracao();
-                // salvar dados da agenda
-              }
-            },
-          ),
-        ],
+        
       ),
       body: Form(
         key: _formKey,
@@ -214,6 +237,21 @@ class _ConfiguracaoAgendaState extends State<ConfiguracaoAgenda> {
                   },
                 ),
               ),
+              Container(
+                margin: const EdgeInsets.only(top: 30, left: 25, right: 25),
+                width: 300,
+                decoration: const BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: TextButton(
+                    onPressed: () {
+                      _salvarConfiguracao();
+                    },
+                    child: const Text(
+                      'Salvar',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    )),
+              )
             ],
           ),
         ),
