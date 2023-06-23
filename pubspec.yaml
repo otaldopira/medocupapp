@@ -48,6 +48,8 @@ dependencies:
   flutter_profile_picture: ^2.0.0
   flutter_quill: ^7.1.19
   awesome_dialog: ^3.0.2
+  http: ^0.13.6
+  local_auth: ^2.1.6
  
 
 dev_dependencies:

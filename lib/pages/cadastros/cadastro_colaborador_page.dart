@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +11,7 @@ import 'package:medocup_app/models/colaborador_model.dart';
 import 'package:medocup_app/models/endereco_model.dart';
 import 'package:medocup_app/providers/colaborador_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 // ignore: must_be_immutable
 class CadastroColaboradorPage extends StatefulWidget {
@@ -167,6 +170,24 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
     }
   }
 
+  buscarCep(String cep) async {
+    var response =
+        await http.get(Uri.parse("https://viacep.com.br/ws/$cep/json/"));
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      setState(() {
+      _estadoSelecionado = jsonResponse["uf"];
+        
+      });
+      _cidade.text = jsonResponse["localidade"];
+      _bairro.text = jsonResponse["bairro"];
+      _rua.text = jsonResponse["logradouro"];
+
+    } 
+
+    return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -321,6 +342,11 @@ class _CadastroColaboradorPageState extends State<CadastroColaboradorPage>
                     inputFormatters: [MaskedInputFormatter('#####\-###')],
                     onSaved: (value) {
                       _cep.text = value!;
+                    },
+                    onChanged: (value) {
+                      if (value.length > 8) {
+                        buscarCep(value);
+                      }
                     },
                     validator: (value) => combine(
                       [
