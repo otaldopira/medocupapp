@@ -3,20 +3,22 @@ import 'package:local_auth/local_auth.dart';
 
 class LocalAuthService extends ChangeNotifier {
   final LocalAuthentication auth;
-
   LocalAuthService({required this.auth});
 
   Future<bool> isBiometricAvailable() async {
-    try {
-      final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-      final bool canAuthenticate =
-          canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+  try {
+    final bool hasBiometrics = await auth.canCheckBiometrics;
+    final bool hasDeviceSupport = await auth.isDeviceSupported();
 
-      return true;
-    } catch (e) {
-      return false;
+    if (hasBiometrics && hasDeviceSupport) {
+      return true; // Autenticação biométrica disponível
+    } else {
+      return false; // Autenticação biométrica não disponível
     }
+  } catch (e) {
+    return false; // Ocorreu um erro durante a verificação
   }
+}
 
   Future<bool> authenticate() async {
     return await auth.authenticate(

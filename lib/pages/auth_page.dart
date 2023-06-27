@@ -38,7 +38,14 @@ class _AuthPageState extends State<AuthPage> {
               builder: (context) => const HomePage(),
             ));
       }
-    } else {}
+    } else {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const HomePage(),
+          ));
+    }
   }
 
   @override

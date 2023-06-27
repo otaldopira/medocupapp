@@ -50,6 +50,7 @@ dependencies:
   awesome_dialog: ^3.0.2
   http: ^0.13.6
   local_auth: ^2.1.6
+  device_info_plus: ^9.0.2
  
 
 dev_dependencies:

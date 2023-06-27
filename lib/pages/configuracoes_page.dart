@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medocup_app/pages/cadastros/cadastro_page.dart';
 import 'package:medocup_app/pages/preferencias_page.dart';
-import 'package:medocup_app/providers/agenda_provider.dart';
 import 'package:medocup_app/providers/agendamento_provider.dart';
 import 'package:medocup_app/services/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -57,9 +56,6 @@ class MaisPage extends StatelessWidget {
                         context
                             .read<AgendamentoProvider>()
                             .limparAgendamentos();
-                        context
-                            .read<AgendaProvider>()
-                            .setDataSelecionada(DateTime.now());
                         context.read<AuthService>().sair();
                       },
                     ),

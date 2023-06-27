@@ -10,6 +10,7 @@ class AuthService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? usuario;
   bool isLoading = true;
+  bool returnLogin = true;
 
   AuthService() {
     _authCheck();
@@ -44,32 +45,34 @@ class AuthService extends ChangeNotifier {
     return null;
   }
 
-
-  alterar(String email, String senha)async{
+  alterar(String email, String senha) async {
     try {
       await _auth.currentUser!.updateEmail(email);
       await _auth.currentUser!.updatePassword(senha);
     } catch (e) {
-       throw AuthException('Não foi possível alterar as credenciais');
+      throw AuthException('Não foi possível alterar as credenciais');
     }
-    
   }
 
   entrar(String email, String senha) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: senha);
+      returnLogin = false;
       _getUser();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw AuthException('Usuário não encontrado');
       } else if (e.code == 'wrong-password') {
         throw AuthException('Senha incorreta');
+      } else {
+        throw AuthException('Erro ao efetuar login');
       }
     }
   }
 
   sair() async {
     await _auth.signOut();
+    returnLogin = true;
     _getUser();
   }
 }
